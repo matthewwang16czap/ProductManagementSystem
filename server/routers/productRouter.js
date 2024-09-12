@@ -3,18 +3,16 @@ const router = express.Router();
 
 const {
     createProduct,
-    getAllProducts,
-    getProductById,
+    getProduct,
     updateProduct,
-    deleteProductById,
-    deleteProductsByUserId
+    deleteProduct,
 } = require('../controllers/productController');
 
-router.post('/user/product',createProduct)
-router.get('/user/:id/products',getAllProducts)
-router.get('/user/product/:id',getProductById)
-router.put('/user/product:id',updateProduct)
-router.get('/user/product/delete/:id',deleteProductById)
-router.get('/user/:id/delete/products',deleteProductsByUserId)
+const tokenAuth = require('../middlewares/tokenAuth');
+
+router.get('/products/:productId', getProduct);
+router.post('/products', tokenAuth, createProduct);
+router.put('/products/:productId', tokenAuth, updateProduct);
+router.delete('/products/:productId', tokenAuth, deleteProduct);
 
 module.exports = router;

@@ -1,87 +1,67 @@
+const User = require('../models/User'); 
 const Cart = require('../models/Cart'); 
+const Product = require('../models/Product'); 
 
-// Create a new cart
-const createCart = async (req, res) => {
+// Get a user cart by id from jwt token
+// will update cart if quantity > stock
+const getCart = async (req, res) => {
   try {
-    const newCart = new Cart(req.body);
-    await newCart.save();
-    res.status(201).json({ message: 'Cart created' });
-  } catch (err) {
-    console.log(err.message);
-    if (err.name === 'ValidationError') res.status(400).json({ message: 'Invalid cart data' });
-    else res.status(500).json({ message: err.message });
-  }
-};
-
-// Get all products of user
-const getAllProductsOfCart = async (req, res) => {
-  try {
-    const userId = req.params.id
-    const cart = await Cart.find({userId: userId});
-    const products = cart.items
-    res.status(200).json(products);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// Get a single product by ID
-const getCartById = async (req, res) => {
-  try {
-    const userId = req.params.id
-    const cart = await Cart.find({userId: userId});
+    const cart = await Cart.findById(req.user.cart);
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
-    res.status(200).json(cart);
+    // trace name, price, stock and thumbnailUrl for each item
+    const returnItems = await Promise.all(
+      cart.items.map(async item => {
+        const product = await Product.findById(item.productId, 'name price stock thumbnailUrl');
+        return {...item, ...product.toObject()};
+      })
+    );
+    // update quantity refer to stock
+    cart.items = cart.items.map((item, idx) => 
+      ({...item, quantity: Math.min(item.quantity, returnItems[idx].stock)})
+    );
+    await cart.save();
+    returnItems = returnItems.map(item => 
+      ({...item, quantity: Math.min(item.quantity, item.stock)})
+    );
+    res.status(200).json(returnItems);
   } catch (err) {
-    if (err.name === 'CastError') res.status(400).json({ message: 'Invalid cart ID' });
+    if (err.name === 'CastError') res.status(400).json({ message: 'Invalid user ID' });
     else res.status(500).json({ message: err.message });
   }
 };
 
-// Update a cart by ID
-const updateCartByProduct = async (req, res) => {
+// Update a cart item by id from jwt token and productId and quantity
+const updateCartItem = async (req, res) => {
   try {
-    const userId = req.params.id
-    const {productId, quantity} = await req.body 
-    const updatedCart= await Cart.findByIdAndUpdate(userId);
-    if (!updatedCart) return res.status(404).json({ message: 'Cart not found' });
-    // 
-    if (!productId in updatedCart.items){
-      updatedCart.items.push((productId, quantity))
-    }else{
-      updatedCart.items[productId] = quantity
+    const cart = await Cart.findById(req.user.cart);
+    if (!cart) return res.status(404).json({ message: 'Cart not found' });
+    // get item to be updated
+    const existingItem = cart.items.find(item => item.productId.toString() === req.body.productId);
+    if (existingItem) {
+      if ('quantity' in existingItem) {
+        // update quantity if product exists in the cart
+        // when quantity=0 it pruely means out of stock
+        existingItem.quantity = req.body.quantity;
+      }
+      else {
+        // if no quantity provided, remove it
+        cart.items.pull({ productId: req.body.productId });
+      }
+    } 
+    else {
+      // add new item to the cart
+      cart.items.push({ productId: req.body.productId, quantity: req.body.quantity });
     }
-    await updatedCart.save()
-
-    res.status(200).json({ message: 'Cart add product' });
+    await cart.save();
+    // return success
+    res.status(200).json({ message: 'Cart updated product', newCart: cart });
   } catch (err) {
-    if (err.name === 'ValidationError') res.status(400).json({ message: 'Invalid product data' });
-    else if (err.name === 'CastError') res.status(400).json({ message: 'Invalid product ID' });
+    if (err.name === 'CastError') res.status(400).json({ message: 'Invalid user ID' });
     else res.status(500).json({ message: err.message });
   }
 };
-
-
-// Delete a products by userId
-const deleteCartByUserId = async (req, res) => {
-    try {
-      const userId = req.params.id
-      const cart = await Cart.findByIdAndDelete({userId: userId});
-      if (!cart) return res.status(404).json({ message: 'Cart not found' });
-      res.status(200).json({ message: 'Cart deleted' });
-    } catch (err) {
-      if (err.name === 'CastError') res.status(400).json({ message: 'Invalid user ID' });
-      else res.status(500).json({ message: err.message });
-    }
-};
-
-
-
 
 module.exports = {
-  createCart,
-  getAllProductsOfCart,
-  getCartById,
-  updateCartByProduct,
-  deleteCartByUserId  
+  getCart,
+  updateCartItem,
 };

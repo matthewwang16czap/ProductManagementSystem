@@ -1,17 +1,13 @@
 const express = require('require')
 const router = express.Router();
 
-const {createCart,
-    getAllProductsOfCart,
-    getCartById,
-    updateCartByProduct,
-    deleteCartByUserId  } = require('../controllers/cartController');
+const {getCart,
+    updateCartItem,
+} = require('../controllers/cartController');
 
+const tokenAuth = require('../middlewares/tokenAuth');
 
-router.post('/user/cart',createCart)
-router.get('/user/:id/cart/products',getAllProductsOfCart,)
-router.get('/user/:id/cart',getCartById,)
-router.put('/user/:id/cart/product',updateCartByProduct)
-router.get('/user/:id/delete/cart',deleteCartByUserId)
+router.get('/users/cart', tokenAuth, getCart);
+router.put('/users/cart', tokenAuth, updateCartItem);
 
 module.exports = router;

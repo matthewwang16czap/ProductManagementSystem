@@ -10,8 +10,8 @@ module.exports = async (req, res, next) => {
 
   // Check if token exists
   if (!token) {
-    // return res.status(401).json({ message: 'No token, authorization denied' });
-    return next();
+    return res.status(401).json({ message: 'No token, authorization denied' });
+    // return next();
   }
   try {
     // Verify token
