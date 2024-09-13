@@ -38,7 +38,7 @@ const updateCartItem = async (req, res) => {
     // get item to be updated
     const existingItem = cart.items.find(item => item.productId.toString() === req.body.productId);
     if (existingItem) {
-      if ('quantity' in existingItem) {
+      if ('quantity' in req.body) {
         // update quantity if product exists in the cart
         // when quantity=0 it pruely means out of stock
         existingItem.quantity = req.body.quantity;
