@@ -5,26 +5,24 @@ const Shop = require('../models/Shop');
 // Create a new user
 const createUser = async (req, res) => {
   try {
-    const newUser = new User(req.body);
-    await newUser.save();
-    if (req.body.role === "regular") {
-      // create a cart for the user
-      const newCart = new Cart({userId: newUser._id});
+    const newUser = new User({...req.body, cart: null, shop: null});
+    if (req.body.role === 'regular') {
+      // create cart and update newUser
+      const newCart = new Cart({ userId: newUser._id });
       await newCart.save();
-      // save the cart id to user
-      await newUser.updateOne({cart: newCart._id});
-    }
-    else if (req.body.role === "admin") {
-      // create a shop for the user
-      const newShop = new Shop({userId: newUser._id});
+      newUser.cart = newCart._id;
+    } else if (req.body.role === 'admin') {
+      // create shop and update newUser
+      const newShop = new Shop({ userId: newUser._id });
       await newShop.save();
-      // save the shop id to user
-      await newUser.updateOne({cart: newShop._id});
+      newUser.shop = newShop._id;
     }
+    // save newUser
+    await newUser.save();
     // return success
     res.status(201).json({ message: 'User created', newUser: newUser });
   } catch (err) {
-    if (err.name === 'ValidationError') res.status(400).json({ message: 'Invalid user data' });
+    if (err.name === 'ValidationError') res.status(400).json({ message: err.message });
     else res.status(500).json({ message: err.message });
   }
 };
