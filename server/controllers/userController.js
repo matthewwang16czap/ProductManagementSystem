@@ -42,17 +42,26 @@ const getUserPublic = async (req, res) => {
 // Update a user by userId from jwt token
 const updateUser = async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.user.id, req.body, { new: true });
+    // Allow only updating username, password, and email
+    const allowedFields = ['username', 'password', 'email'];
+    const updateBody = {};
+    Object.keys(req.body).forEach(key => {
+        if (allowedFields.includes(key)) {
+            updateBody[key] = req.body[key];
+        }
+    });
+    // update
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, updateBody, { new: true });
     if (!updatedUser) return res.status(404).json({ message: 'User not found' });
     res.status(200).json({ message: 'User updated', updatedUser: updatedUser});
   } catch (err) {
-    if (err.name === 'ValidationError') res.status(400).json({ message: 'Invalid user data' });
+    if (err.name === 'ValidationError') res.status(400).json({ message: err.message });
     else if (err.name === 'CastError') res.status(400).json({ message: 'Invalid user ID' });
     else res.status(500).json({ message: err.message });
   }
 };
 
-// Delete a user by ID from jwt token
+// Delete a user by userId from jwt token
 const deleteUser = async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.user.id);
