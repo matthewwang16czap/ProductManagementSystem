@@ -7,7 +7,7 @@ const authRouter = require("./routers/authRouter");
 const errorHandlerMiddleware = require("./middlewares/errorHandler");
 const connectDB = require("./db");
 const app = express();
-const port = 5500;
+const port = 5000;
 
 connectDB();
 
