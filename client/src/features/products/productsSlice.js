@@ -16,6 +16,20 @@ export const getProduct = createAsyncThunk(
   }
 );
 
+export const getAllProducts = createAsyncThunk(
+  "products/getAllProducts",
+  async ({ page, limit }) => {
+    try {
+      const response = await fetch(`${API_URL}?limit=${limit}&page=${page}`, {
+        method: "GET",
+      });
+      return response.json();
+    } catch (err) {
+      console.error("Failed fetch request:", err);
+    }
+  }
+);
+
 export const createProduct = createAsyncThunk(
   "products/createProduct",
   async (product) => {
@@ -105,6 +119,9 @@ const productsSlice = createSlice({
       .addCase(getProduct.pending, handlePending)
       .addCase(getProduct.fulfilled, handleFulfilled)
       .addCase(getProduct.rejected, handleRejected)
+      .addCase(getAllProducts.pending, handlePending)
+      .addCase(getAllProducts.fulfilled, handleFulfilled)
+      .addCase(getAllProducts.rejected, handleRejected)
       .addCase(createProduct.pending, handlePending)
       .addCase(createProduct.fulfilled, handleFulfilled)
       .addCase(createProduct.rejected, handleRejected)

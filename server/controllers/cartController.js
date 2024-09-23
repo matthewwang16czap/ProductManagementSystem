@@ -11,7 +11,7 @@ const getCart = async (req, res) => {
     // trace name, price, stock and thumbnailUrl for each item
     const returnItems = await Promise.all(
       cart.items.map(async item => {
-        const product = await Product.findById(item.productId, 'name price stock thumbnailUrl');
+        const product = await Product.findById(item.productId).select('name price stock thumbnailUrl');
         return {...item, ...product.toObject()};
       })
     );
