@@ -5,6 +5,7 @@ import './App.css'
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
+import Routes from './routes/Routes';
 import {getUserPublic} from "./features/users/usersSlice";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
 
   return (
     <>
+      <Routes />
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
