@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const API_URL = "/api";
 
-const login = createAsyncThunk("auth/login", async ({ username, password }) => {
+export const login = createAsyncThunk("auth/login", async ({ username, password }) => {
   try {
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
@@ -24,6 +24,7 @@ const handlePending = (state) => {
 
 const handleFulfilled = (state, action) => {
   state.loading = false;
+  state.error = null;
   // set token
   localStorage.setItem("jwtToken", action.payload.token);
 };

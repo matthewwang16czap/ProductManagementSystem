@@ -1,10 +1,25 @@
-import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import {getUserPublic} from "./features/users/usersSlice";
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+
+  const dispatch = useDispatch();
+  const { lastActionPayload, loading, error } = useSelector((state) => state.users);
+
+  useEffect(() => {
+    console.log(lastActionPayload, loading, error);
+  }, [lastActionPayload, loading, error]);
+
+  useEffect(() => {
+    dispatch(getUserPublic({userId: '66e51d77babd8ede85e0447f'}));
+  }, [dispatch])
 
   return (
     <>
