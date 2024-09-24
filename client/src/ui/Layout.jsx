@@ -14,7 +14,7 @@ function Layout() {
   const { user, loading, error } = useSelector((state) => state.users);
 
   useEffect(() => {
-    console.log(user, loading, error);
+    //console.log(user, loading, error);
   }, [user, loading, error]);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function Layout() {
           </div>
         </div>
       </header>
-      <main>
+      <main className="container-fluid mt-3">
         <Outlet /> {/* This is where the routed components will be rendered */}
       </main>
       <footer
