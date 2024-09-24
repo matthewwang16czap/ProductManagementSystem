@@ -24,6 +24,7 @@ function CreateUserPage() {
     role: {
       type: "radio",
       selections: ["regular", "admin"],
+      label: "Select an role: ",
     },
     password: {
       type: "password",

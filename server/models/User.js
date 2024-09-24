@@ -23,7 +23,7 @@ const userSchema = new Schema({
       message: 'Please enter a valid email address',
     },
   },
-  role: { type: String, enum: ['regular', 'admin'], default: 'regular' },
+  role: { type: String, enum: ['regular', 'admin'], required: true },
   cart: { type: Schema.Types.ObjectId, ref: 'Cart', default: null },
   shop: { type: Schema.Types.ObjectId, ref: 'Shop', default: null },
 });
