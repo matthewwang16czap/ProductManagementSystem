@@ -61,6 +61,15 @@ function Layout() {
       <main>
         <Outlet /> {/* This is where the routed components will be rendered */}
       </main>
+      <footer
+        className="footer fixed-bottom text-center"
+        style={{ padding: "0.5em", backgroundColor: "#F0F8FF" }}
+      >
+        <div className="row g-1 justify-content-center">
+          <div className="col-6">@2024 All Rights Reserved.</div>
+          <div className="col-6">Contact Us.</div>
+        </div>
+      </footer>
     </div>
   );
 }
