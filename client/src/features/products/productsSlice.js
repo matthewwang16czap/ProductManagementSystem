@@ -112,15 +112,23 @@ const productsSlice = createSlice({
     lastActionPayload: null,
     loading: false,
     error: null,
+    product: null,
+    products: null
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getProduct.pending, handlePending)
-      .addCase(getProduct.fulfilled, handleFulfilled)
+      .addCase(getProduct.fulfilled, (state, action) => {
+        handleFulfilled(state, action);
+        state.product = action.payload;
+      })
       .addCase(getProduct.rejected, handleRejected)
       .addCase(getAllProducts.pending, handlePending)
-      .addCase(getAllProducts.fulfilled, handleFulfilled)
+      .addCase(getAllProducts.fulfilled, (state, action) => {
+        handleFulfilled(state, action);
+        state.products = action.payload;
+      })
       .addCase(getAllProducts.rejected, handleRejected)
       .addCase(createProduct.pending, handlePending)
       .addCase(createProduct.fulfilled, handleFulfilled)

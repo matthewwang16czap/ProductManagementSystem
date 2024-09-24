@@ -2,11 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const API_URL = "/api/users";
 
-export const getUserPublic = createAsyncThunk(
-  "users/getUserPublic",
-  async ({ userId }) => {
+export const getUser = createAsyncThunk(
+  "users/getUser",
+  async () => {
     try {
-      const response = await fetch(`${API_URL}/${userId}`, {
+      const response = await fetch(`${API_URL}`, {
         method: "GET",
       });
       return response.json();
@@ -154,13 +154,19 @@ const usersSlice = createSlice({
     lastActionPayload: null,
     loading: false,
     error: null,
+    user: null,
+    shop: null,
+    cart: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getUserPublic.pending, handlePending)
-      .addCase(getUserPublic.fulfilled, handleFulfilled)
-      .addCase(getUserPublic.rejected, handleRejected)
+      .addCase(getUser.pending, handlePending)
+      .addCase(getUser.fulfilled, (state, action) => {
+        handleFulfilled(state, action);
+        state.user = action.payload;
+      })
+      .addCase(getUser.rejected, handleRejected)
       .addCase(createUser.pending, handlePending)
       .addCase(createUser.fulfilled, handleFulfilled)
       .addCase(createUser.rejected, handleRejected)
@@ -171,10 +177,16 @@ const usersSlice = createSlice({
       .addCase(deleteUser.fulfilled, handleFulfilled)
       .addCase(deleteUser.rejected, handleRejected)
       .addCase(getShop.pending, handlePending)
-      .addCase(getShop.fulfilled, handleFulfilled)
+      .addCase(getShop.fulfilled, (state, action) => {
+        handleFulfilled(state, action);
+        state.shop = action.payload;
+      })
       .addCase(getShop.rejected, handleRejected)
       .addCase(getCart.pending, handlePending)
-      .addCase(getCart.fulfilled, handleFulfilled)
+      .addCase(getCart.fulfilled, (state, action) => {
+        handleFulfilled(state, action);
+        state.cart = action.payload;
+      })
       .addCase(getCart.rejected, handleRejected)
       .addCase(updateCartItem.pending, handlePending)
       .addCase(updateCartItem.fulfilled, handleFulfilled)

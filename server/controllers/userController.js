@@ -27,10 +27,10 @@ const createUser = async (req, res) => {
   }
 };
 
-// Get a single user by userId, without private info
-const getUserPublic = async (req, res) => {
+// Get current user, without private info
+const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId, 'username role shop');
+    const user = await User.findById(req.user.id, 'username role email');
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.status(200).json(user);
   } catch (err) {
@@ -78,7 +78,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
     createUser,
-    getUserPublic,
+    getUser,
     updateUser,
     deleteUser,
   };
