@@ -2,14 +2,24 @@ import Form from "../../ui/Form";
 import { createUser } from "./usersSlice";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function CreateUserPage() {
   const { lastActionPayload } = useSelector((state) => state.users);
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log(lastActionPayload);
-    lastActionPayload?.message && window.alert(lastActionPayload?.message);
-  }, [lastActionPayload]);
+    if (lastActionPayload?.message) {
+      if (lastActionPayload.message === "User created") {
+        window.confirm("Successfully Registered, go to login?")
+          ? navigate("/login", { replace: true })
+          : window.location.reload();
+      } else {
+        window.alert(lastActionPayload.message);
+      }
+    }
+  }, [lastActionPayload, navigate]);
 
   const formValidations = {
     username: {
@@ -28,19 +38,30 @@ function CreateUserPage() {
     },
     password: {
       type: "password",
-      pattern: "(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]{8,})",
-      failedMessage:
-        "Password must be at least 8 characters long and contain combinations of numbers and characters",
+      pattern:
+        "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])([a-zA-Z0-9!@#$%^&*]{8,})",
+      failedMessage: `the password must be: \n
+      1. Contains at least one digit \n
+      2. Contains at least one letter \n
+      3. Contains at least one special character from the set !@#$%^&* \n
+      4. Is at least 8 characters long `,
     },
   };
 
   return (
-    <Form
-      formName="Sign Up"
-      fields={["username", "email", "role", "password"]}
-      formValidations={formValidations}
-      dispatchAction={createUser}
-    />
+    <div className="signup-page">
+      <Form
+        formName="Sign Up"
+        fields={["username", "email", "role", "password"]}
+        formValidations={formValidations}
+        dispatchAction={createUser}
+      />
+      <div className="text-center m-3">
+        <button type="button" className="btn btn-secondary" onMouseDown={() => navigate("/login")}>
+          Login
+        </button>
+      </div>
+    </div>
   );
 }
 

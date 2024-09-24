@@ -41,7 +41,7 @@ function Form({ formName, formValidations, dispatchAction }) {
         {Object.entries(formValidations).map(([field, content]) => (
           <div key={field} className="row">
             <div className="col"></div>
-            <div className="col-7">
+            <div className="col-xs-10 col-sm-8 col-md-6">
               {content.type === "radio" && (
                 <div className="mb-3">
                   <label className="form-check-label me-3">

@@ -9,7 +9,7 @@ const userSchema = new Schema({
     required: true,
     validate: {
       validator: function (password) {
-        return /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]{8,})$/.test(password);
+        return /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])([a-zA-Z0-9!@#$%^&*]{8,})$/.test(password);
       },
       message: 'Password must be at least 8 characters long and contain combinations of numbers and characters',
     },
