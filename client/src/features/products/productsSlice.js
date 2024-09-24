@@ -9,6 +9,7 @@ export const getProduct = createAsyncThunk(
       const response = await fetch(`${API_URL}/${productId}`, {
         method: "GET",
       });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);
@@ -23,6 +24,7 @@ export const getAllProducts = createAsyncThunk(
       const response = await fetch(`${API_URL}?limit=${limit}&page=${page}`, {
         method: "GET",
       });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);

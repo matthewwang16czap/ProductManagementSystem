@@ -1,41 +1,68 @@
 import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-import searchIcon from '../assets/search.svg';
-import personIcon from '../assets/person-circle.svg';
+import searchIcon from "../assets/search.svg";
+import personIcon from "../assets/person-circle.svg";
+import shopIcon from "../assets/shop.svg";
+import cartIcon from "../assets/cart.svg";
 
-const Layout = () => (
-  <div
-    className="container-fluid"
-    style={{ "padding-left": 0, "padding-right": 0 }}
-  >
-    <header
-      className="container-fluid text-center"
-      style={{ padding: "0.5em", backgroundColor: "#F0F8FF" }}
+import { getUser } from "../features/users/usersSlice";
+
+function Layout() {
+  const dispatch = useDispatch();
+  const { user, loading, error } = useSelector((state) => state.users);
+
+  useEffect(() => {
+    console.log(user, loading, error);
+  }, [user, loading, error]);
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
+  return (
+    <div
+      className="container-fluid"
+      style={{ paddingLeft: 0, paddingRight: 0 }}
     >
-      <div className="row g-1 justify-content-center">
-        <div className="col-4">Management</div>
-        <div className="col-6">
-          <div className="input-group input-group-sm">
-            <span className="input-group-text" id="search-button">
-              <img src={searchIcon} alt="Search" />
-            </span>
-            <input
-              type="text"
-              className="form-control"
-              placeholder=""
-              aria-label="Search"
-              aria-describedby="search-button"
-            />
+      <header
+        className="container-fluid text-center"
+        style={{ padding: "0.5em", backgroundColor: "#F0F8FF" }}
+      >
+        <div className="row g-1 justify-content-center">
+          <div className="col-4">Management</div>
+          <div className="col-6">
+            <div className="input-group input-group-sm">
+              <span className="input-group-text" id="search-button">
+                <img src={searchIcon} alt="Search" />
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder=""
+                aria-label="Search"
+                aria-describedby="search-button"
+              />
+            </div>
+          </div>
+          <div className="col-1">
+            <img src={personIcon} alt="Me" />
+          </div>
+          <div className="col-1">
+            {user?.role === "admin" ? (
+              <img src={shopIcon} alt="Shop" />
+            ) : (
+              <img src={cartIcon} alt="Cart" />
+            )}
           </div>
         </div>
-        <div className="col-1"><img src={personIcon} alt="Me" /></div>
-        <div className="col-1">shop</div>
-      </div>
-    </header>
-    <main>
-      <Outlet /> {/* This is where the routed components will be rendered */}
-    </main>
-  </div>
-);
+      </header>
+      <main>
+        <Outlet /> {/* This is where the routed components will be rendered */}
+      </main>
+    </div>
+  );
+}
 
 export default Layout;

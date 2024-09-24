@@ -11,7 +11,7 @@ export const login = createAsyncThunk("auth/login", async ({ username, password 
       },
       body: JSON.stringify({ username, password }),
     });
-    if (!response.ok) throw new Error(response.json());
+    if (!response.ok) throw new Error(JSON.stringify(await response.json()));
     return response.json();
   } catch (err) {
     console.error("Failed fetch request:", err);

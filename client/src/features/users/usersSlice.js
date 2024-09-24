@@ -6,9 +6,14 @@ export const getUser = createAsyncThunk(
   "users/getUser",
   async () => {
     try {
+      const token = localStorage.getItem('jwtToken');
       const response = await fetch(`${API_URL}`, {
         method: "GET",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);
@@ -86,6 +91,7 @@ export const getShop = createAsyncThunk(
           'Authorization': `Bearer ${token}`,
         },
       });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);
@@ -104,6 +110,7 @@ export const getCart = createAsyncThunk(
           'Authorization': `Bearer ${token}`,
         },
       });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);
