@@ -26,6 +26,7 @@ function Form({ formName, formValidations, dispatchAction }) {
       dispatch(dispatchAction(formData));
     } else {
       console.log("Form is invalid");
+      formRef.current.className = "was-validated";
     }
   };
 
@@ -34,7 +35,7 @@ function Form({ formName, formValidations, dispatchAction }) {
       <h1 className="mb-3">{formName}</h1>
       <form
         ref={formRef}
-        className="was-validated"
+        className="needs-validation"
         onSubmit={handleSubmit}
         noValidate
       >
@@ -82,7 +83,7 @@ function Form({ formName, formValidations, dispatchAction }) {
                     pattern={content.pattern}
                     required={true}
                   />
-                  <label htmlFor={field}>{field}</label>
+                  <label htmlFor={field}>{content.label}</label>
                   <div className="invalid-feedback">
                     {content.failedMessage}
                   </div>

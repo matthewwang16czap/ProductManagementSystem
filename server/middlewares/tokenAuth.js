@@ -4,7 +4,7 @@ module.exports = async (req, res, next) => {
   // Get token from header
   const token =
     req.header('x-auth-token') ||
-    req.headers?.Authorization?.match(/^Bearer (.+)/)[1];
+    req.headers?.authorization?.match(/^Bearer (.+)/)[1];
 
   // req.header { authorization: 'Bearer hureuiwe.bhuerer.duwwe' }
 

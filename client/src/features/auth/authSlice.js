@@ -2,14 +2,14 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const API_URL = "/api";
 
-export const login = createAsyncThunk("auth/login", async ({ username, password }) => {
+export const login = createAsyncThunk("auth/login", async ({ account, password }) => {
   try {
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ account, password }),
     });
     if (!response.ok) throw new Error(JSON.stringify(await response.json()));
     return response.json();

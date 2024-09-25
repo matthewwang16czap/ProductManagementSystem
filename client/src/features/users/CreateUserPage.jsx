@@ -23,11 +23,13 @@ function CreateUserPage() {
 
   const formValidations = {
     username: {
+      label: "username",
       type: "text",
       pattern: "[a-zA-Z0-9]{6,}",
       failedMessage: "username must contain at least 6 characters",
     },
     email: {
+      label: "email",
       type: "email",
       failedMessage: "Not a valid email",
     },
@@ -37,6 +39,7 @@ function CreateUserPage() {
       label: "Select an role: ",
     },
     password: {
+      label: "password",
       type: "password",
       pattern:
         "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])([a-zA-Z0-9!@#$%^&*]{8,})",
@@ -52,7 +55,6 @@ function CreateUserPage() {
     <div className="signup-page">
       <Form
         formName="Sign Up"
-        fields={["username", "email", "role", "password"]}
         formValidations={formValidations}
         dispatchAction={createUser}
       />

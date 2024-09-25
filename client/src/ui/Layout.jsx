@@ -14,7 +14,7 @@ function Layout() {
   const { user, loading, error } = useSelector((state) => state.users);
 
   useEffect(() => {
-    //console.log(user, loading, error);
+    console.log(user, loading, error);
   }, [user, loading, error]);
 
   useEffect(() => {
