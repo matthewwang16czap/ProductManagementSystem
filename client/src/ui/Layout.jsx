@@ -59,7 +59,7 @@ function Layout() {
             {user ? (
               <ul
                 className="dropdown-menu text-center"
-                style={{ "min-width": "inherit" }}
+                style={{ minWidth: "inherit" }}
               >
                 <li>
                   <Link
@@ -70,11 +70,19 @@ function Layout() {
                     Logout
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    className="dropdown-item"
+                    to="/user/changepassword"
+                  >
+                    Change Password
+                  </Link>
+                </li>
               </ul>
             ) : (
               <ul
                 className="dropdown-menu text-center"
-                style={{ "min-width": "inherit" }}
+                style={{ minWidth: "inherit" }}
               >
                 <li>
                   <Link
@@ -89,11 +97,12 @@ function Layout() {
             )}
           </div>
           <div className="col-1">
-            {user?.role === "admin" ? (
-              <img src={shopIcon} alt="Shop" />
-            ) : (
-              <img src={cartIcon} alt="Cart" />
-            )}
+            {user &&
+              (user.role === "admin" ? (
+                <img src={shopIcon} alt="Shop" />
+              ) : (
+                <img src={cartIcon} alt="Cart" />
+              ))}
           </div>
         </div>
       </header>
