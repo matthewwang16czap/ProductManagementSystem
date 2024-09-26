@@ -13,6 +13,7 @@ export const getProduct = createAsyncThunk(
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);
+      throw err;
     }
   }
 );
@@ -28,6 +29,7 @@ export const getAllProducts = createAsyncThunk(
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);
+      throw err;
     }
   }
 );
@@ -46,9 +48,11 @@ export const createProduct = createAsyncThunk(
         },
         body: JSON.stringify(product),
       });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);
+      throw err;
     }
   }
 );
@@ -67,9 +71,11 @@ export const updateProduct = createAsyncThunk(
         },
         body: JSON.stringify(updatedProduct),
       });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);
+      throw err;
     }
   }
 );
@@ -85,9 +91,11 @@ export const deleteProduct = createAsyncThunk(
           'Authorization': `Bearer ${token}`,
         },
       });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
       return response.json();
     } catch (err) {
       console.error("Failed fetch request:", err);
+      throw err;
     }
   }
 );
@@ -100,11 +108,14 @@ const handlePending = (state) => {
 const handleFulfilled = (state, action) => {
   state.loading = false;
   state.lastActionPayload = action.payload;
+  state.lastActionType = action.type;
   state.error = null;
 };
 
 const handleRejected = (state, action) => {
   state.loading = false;
+  state.lastActionPayload = null;
+  state.lastActionType = action.type;
   state.error = action.error.message;
 };
 
@@ -112,6 +123,7 @@ const productsSlice = createSlice({
   name: "products",
   initialState: {
     lastActionPayload: null,
+    lastActionType: null,
     loading: false,
     error: null,
     product: null,

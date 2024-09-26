@@ -5,21 +5,23 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function CreateUserPage() {
-  const { lastActionPayload } = useSelector((state) => state.users);
+  const { lastActionType, lastActionPayload, loading, error } = useSelector(
+    (state) => state.users
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(lastActionPayload);
-    if (lastActionPayload?.message) {
-      if (lastActionPayload.message === "User created") {
+    console.log(lastActionType, lastActionPayload, loading, error);
+    if (!loading && lastActionType?.includes("users/createUser")) {
+      if (error) {
+        window.alert(error);
+      } else if (lastActionPayload?.message === "User created") {
         window.confirm("Successfully Registered, go to login?")
           ? navigate("/login", { replace: true })
           : window.location.reload();
-      } else {
-        window.alert(lastActionPayload.message);
       }
     }
-  }, [lastActionPayload, navigate]);
+  });
 
   const formValidations = {
     username: {
@@ -59,7 +61,11 @@ function CreateUserPage() {
         dispatchAction={createUser}
       />
       <div className="text-center m-3">
-        <button type="button" className="btn btn-secondary" onMouseDown={() => navigate("/login")}>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onMouseDown={() => navigate("/login")}
+        >
           Login
         </button>
       </div>

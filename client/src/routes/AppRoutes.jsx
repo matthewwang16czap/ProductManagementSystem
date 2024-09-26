@@ -17,6 +17,7 @@ const AppRoutes = () => (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <Route path="/" element={<Layout />}>
+          <Route index element={<ProductsPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/create" element={<CreateProductPage />} />

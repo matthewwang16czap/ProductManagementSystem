@@ -2,16 +2,25 @@ import Form from "../../ui/Form";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {login} from "./authSlice"
+import { login } from "./authSlice";
 
 function CreateUserPage() {
-  const { user } = useSelector((state) => state.users);
+  const { lastActionType, lastActionPayload, loading, error } = useSelector(
+    (state) => state.auth
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
   useEffect(() => {
-    if (user) navigate(from, { replace: true });
+    console.log(lastActionType, lastActionPayload, loading, error);
+    if (!loading && lastActionType?.includes("auth/login")) {
+      if (error) {
+        window.alert(error);
+      } else if (lastActionPayload) {
+        navigate(from, { replace: true });
+      }
+    }
   });
 
   const formValidations = {
@@ -38,7 +47,11 @@ function CreateUserPage() {
         dispatchAction={login}
       />
       <div className="text-center m-3">
-        <button type="button" className="btn btn-secondary" onMouseDown={() => navigate("/user/signup")}>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onMouseDown={() => navigate("/user/signup")}
+        >
           Sign up
         </button>
       </div>
