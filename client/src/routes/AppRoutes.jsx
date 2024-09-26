@@ -1,16 +1,17 @@
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Layout from "../ui/Layout";
-import LoginPage from "../features/auth/LoginPage";
-import ProductsPage from "../features/products/ProductsPage";
-import ProductDetailPage from "../features/products/ProductDetailPage";
-import CreateProductPage from "../features/products/CreateProductPage";
-import CreateUserPage from "../features/users/CreateUserPage";
-import CartPage from "../features/users/CartPage";
-import ShopPage from "../features/users/ShopPage";
-import CheckoutPage from "../features/users/CheckoutPage";
-import ErrorPage from "../features/errors/ErrorPage";
+const Layout = lazy(() => import("../ui/Layout"));
+const LoginPage = lazy(() => import("../features/auth/LoginPage"));
+const LogoutPage = lazy(() => import("../features/auth/LogoutPage"));
+const ProductsPage = lazy(() => import("../features/products/ProductsPage"));
+const ProductDetailPage = lazy(() => import("../features/products/ProductDetailPage"));
+const CreateProductPage = lazy(() => import("../features/products/CreateProductPage"));
+const CreateUserPage = lazy(() => import("../features/users/CreateUserPage"));
+const CartPage = lazy(() => import("../features/users/CartPage"));
+const ShopPage = lazy(() => import("../features/users/ShopPage"));
+const CheckoutPage = lazy(() => import("../features/users/CheckoutPage"));
+const ErrorPage = lazy(() => import("../features/errors/ErrorPage"));
 
 const AppRoutes = () => (
   <Router>
@@ -19,6 +20,7 @@ const AppRoutes = () => (
         <Route path="/" element={<Layout />}>
           <Route index element={<ProductsPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="logout" element={<LogoutPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/create" element={<CreateProductPage />} />
           <Route path="products/:productId" element={<ProductDetailPage />} />

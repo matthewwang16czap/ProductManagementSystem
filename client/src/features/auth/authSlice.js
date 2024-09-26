@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, createAction } from "@reduxjs/toolkit";
 
 const API_URL = "/api";
 
@@ -24,6 +24,16 @@ export const login = createAsyncThunk(
     }
   }
 );
+
+export const logout = createAction("auth/logout");
+const logoutReducer = (state, action) => {
+  localStorage.removeItem("jwtToken");
+  console.log(state);
+  state.lastActionPayload = "successfully logout";
+  state.lastActionType = action.type;
+  state.loading = false;
+  state.error = null;
+};
 
 // Helper function to handle status
 const handlePending = (state) => {
@@ -59,7 +69,8 @@ const authSlice = createSlice({
     builder
       .addCase(login.pending, handlePending)
       .addCase(login.fulfilled, handleFulfilled)
-      .addCase(login.rejected, handleRejected);
+      .addCase(login.rejected, handleRejected)
+      .addCase(logout, logoutReducer);
   },
 });
 

@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { login } from "./authSlice";
 import { getUser } from "../users/usersSlice";
 
-function CreateUserPage() {
+function LoginPage() {
   const { lastActionType, lastActionPayload, loading, error } = useSelector(
     (state) => state.auth
   );
@@ -63,4 +63,4 @@ function CreateUserPage() {
   );
 }
 
-export default CreateUserPage;
+export default LoginPage;

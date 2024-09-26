@@ -2,13 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const API_URL = "/api/users";
 
-export const logout = (state) => {
-  localStorage.removeItem("jwt-token");
-  state.user = null;
-  state.loading = false;
-  state.error = null;
-};
-
 export const getUser = createAsyncThunk("users/getUser", async () => {
   try {
     const token = localStorage.getItem("jwtToken");
@@ -180,7 +173,10 @@ const usersSlice = createSlice({
         handleFulfilled(state, action);
         state.user = action.payload;
       })
-      .addCase(getUser.rejected, handleRejected)
+      .addCase(getUser.rejected, (state, action) => {
+        handleRejected(state, action);
+        state.user = null;
+      })
       .addCase(createUser.pending, handlePending)
       .addCase(createUser.fulfilled, handleFulfilled)
       .addCase(createUser.rejected, handleRejected)
@@ -195,13 +191,19 @@ const usersSlice = createSlice({
         handleFulfilled(state, action);
         state.shop = action.payload;
       })
-      .addCase(getShop.rejected, handleRejected)
+      .addCase(getShop.rejected, (state, action) => {
+        handleRejected(state, action);
+        state.shop = null;
+      })
       .addCase(getCart.pending, handlePending)
       .addCase(getCart.fulfilled, (state, action) => {
         handleFulfilled(state, action);
         state.cart = action.payload;
       })
-      .addCase(getCart.rejected, handleRejected)
+      .addCase(getCart.rejected, (state, action) => {
+        handleRejected(state, action);
+        state.cart = null;
+      })
       .addCase(updateCartItem.pending, handlePending)
       .addCase(updateCartItem.fulfilled, handleFulfilled)
       .addCase(updateCartItem.rejected, handleRejected);
