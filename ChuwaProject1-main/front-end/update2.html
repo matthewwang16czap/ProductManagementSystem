@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Password Confirmation</title>
+    <style>
+        /* 页面基础样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            background-color: #1f1f2f;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .navbar .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .navbar .right-menu a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+        }
+
+        /* 容器居中样式 */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+
+        .message-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .message-container img {
+            width: 50px;
+            margin-bottom: 20px;
+        }
+
+        .message-container p {
+            font-size: 1rem;
+            color: gray;
+        }
+
+        /* 页脚样式 */
+        .footer {
+            background-color: #1f1f2f;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .footer a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #a3a3a3;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .message-container {
+                margin: 20px;
+            }
+
+            .footer {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <div class="logo">Management Chuwa</div>
+        <div class="right-menu">
+            <a href="#">Sign Out</a>
+            <a href="#">$0.00</a>
+        </div>
+    </div>
+
+    <!-- 确认消息 -->
+    <div class="container">
+        <div class="message-container">
+            <!-- 邮件图标 -->
+            <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Email Sent Icon">
+            <p>We have sent the update password link to your email, please check that!</p>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+        <a href="#">Contact us</a>
+        <a href="#">Privacy Policies</a>
+        <a href="#">Help</a>
+        <p>©2022 All Rights Reserved.</p>
+    </div>
+
+</body>
+</html>
