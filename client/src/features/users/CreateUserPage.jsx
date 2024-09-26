@@ -11,7 +11,6 @@ function CreateUserPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(lastActionType, lastActionPayload, loading, error);
     if (!loading && lastActionType?.includes("users/createUser")) {
       if (error) {
         window.alert(error);

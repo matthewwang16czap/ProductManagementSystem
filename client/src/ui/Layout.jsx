@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -11,11 +11,12 @@ import { getUser } from "../features/users/usersSlice";
 
 function Layout() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const { user, loading, error } = useSelector((state) => state.users);
 
   useEffect(() => {
     console.log(user, loading, error);
-  }, [user, loading, error]);
+  }, [location, user, loading, error]);
 
   useEffect(() => {
     dispatch(getUser());
@@ -27,8 +28,8 @@ function Layout() {
       style={{ paddingLeft: 0, paddingRight: 0 }}
     >
       <header
-        className="container-fluid text-center"
-        style={{ padding: "0.5em", backgroundColor: "#F0F8FF" }}
+        className="container-fluid text-center p-2"
+        style={{ backgroundColor: "#F0F8FF" }}
       >
         <div className="row g-1 justify-content-center">
           <div className="col-4">Management</div>
@@ -46,8 +47,46 @@ function Layout() {
               />
             </div>
           </div>
-          <div className="col-1">
-            <img src={personIcon} alt="Me" />
+          <div className="col-1 dropdown">
+            <button
+              type="button"
+              className="btn btn-link dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <img src={personIcon} alt="Me" />
+            </button>
+            {user ? (
+              <ul
+                className="dropdown-menu text-center"
+                style={{ "min-width": "inherit" }}
+              >
+                <li>
+                  <Link
+                    className="dropdown-item"
+                    to="/logout"
+                    state={{ from: location }}
+                  >
+                    Logout
+                  </Link>
+                </li>
+              </ul>
+            ) : (
+              <ul
+                className="dropdown-menu text-center"
+                style={{ "min-width": "inherit" }}
+              >
+                <li>
+                  <Link
+                    className="dropdown-item"
+                    to="/login"
+                    state={{ from: location }}
+                  >
+                    Login
+                  </Link>
+                </li>
+              </ul>
+            )}
           </div>
           <div className="col-1">
             {user?.role === "admin" ? (
@@ -62,8 +101,8 @@ function Layout() {
         <Outlet /> {/* This is where the routed components will be rendered */}
       </main>
       <footer
-        className="footer fixed-bottom text-center"
-        style={{ padding: "0.5em", backgroundColor: "#F0F8FF" }}
+        className="footer fixed-bottom text-center p-3"
+        style={{ backgroundColor: "#F0F8FF" }}
       >
         <div className="row g-1 justify-content-center">
           <div className="col-6">@2024 All Rights Reserved.</div>

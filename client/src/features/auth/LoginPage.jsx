@@ -1,23 +1,27 @@
 import Form from "../../ui/Form";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { login } from "./authSlice";
+import { getUser } from "../users/usersSlice";
 
 function CreateUserPage() {
   const { lastActionType, lastActionPayload, loading, error } = useSelector(
     (state) => state.auth
   );
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
   useEffect(() => {
-    console.log(lastActionType, lastActionPayload, loading, error);
     if (!loading && lastActionType?.includes("auth/login")) {
       if (error) {
         window.alert(error);
       } else if (lastActionPayload) {
+        // refresh user state
+        dispatch(getUser());
+        // back to from
         navigate(from, { replace: true });
       }
     }
