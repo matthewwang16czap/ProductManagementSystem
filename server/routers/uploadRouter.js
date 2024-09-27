@@ -35,15 +35,15 @@ function checkFileType(file, cb) {
 }
 
 // Route to upload image
-router.post("/upload/:productId", (req, res) => {
+router.post("/products/upload/:productId", (req, res) => {
   upload(req, res, (err) => {
     if (err) {
-      res.status(400).send(err);
+      res.status(400).json({ message: err.message });
     } else {
       if (req.file == undefined) {
-        res.status(400).send("No file selected");
+        res.status(400).json({ message: "No file selected" });
       } else {
-        res.send(`File uploaded: ${req.file.filename}`);
+        res.status(201).json({ message: `File uploaded: ${req.file.filename}` });
       }
     }
   });

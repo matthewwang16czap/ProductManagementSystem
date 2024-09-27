@@ -100,6 +100,29 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
+export const uploadProductImage = createAsyncThunk(
+  "products/uploadProductImage",
+  async ({ file, productId }) => {
+    const formData = new FormData();
+    try {
+      formData.append('productImage', file);
+      const token = localStorage.getItem('jwtToken');
+      const response = await fetch(`${API_URL}/upload/${productId}`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
+      return response.json();
+    } catch (err) {
+      console.error("Failed fetch request:", err);
+      throw err;
+    }
+  }
+);
+
 // Helper function to handle status
 const handlePending = (state) => {
   state.loading = true;
@@ -158,7 +181,10 @@ const productsSlice = createSlice({
       .addCase(updateProduct.rejected, handleRejected)
       .addCase(deleteProduct.pending, handlePending)
       .addCase(deleteProduct.fulfilled, handleFulfilled)
-      .addCase(deleteProduct.rejected, handleRejected);
+      .addCase(deleteProduct.rejected, handleRejected)
+      .addCase(uploadProductImage.pending, handlePending)
+      .addCase(uploadProductImage.fulfilled, handleFulfilled)
+      .addCase(uploadProductImage.rejected, handleRejected);
   },
 });
 
