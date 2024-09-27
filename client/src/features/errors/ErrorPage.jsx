@@ -35,6 +35,10 @@ const FileUpload = () => {
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
+    if (e.target.files[0]) {
+      console.log(`File Name: ${file.name}`);
+      console.log(`File Type: ${file.type}`);
+    }
   };
 
   const handleSubmit = async (e) => {

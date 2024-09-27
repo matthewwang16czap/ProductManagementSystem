@@ -40,7 +40,7 @@ export const createProduct = createAsyncThunk(
     try {
       // get jwttoken
       const token = localStorage.getItem('jwtToken');
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${API_URL}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

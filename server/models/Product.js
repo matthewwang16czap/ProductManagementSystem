@@ -13,7 +13,6 @@ const productSchema = new Schema({
   stock: { type: Number, required: true },
   category: { type: String },
   imageUrl: { type: String },
-  thumbnailUrl: { type: String },
 });
 
 const Product = mongoose.model("Product", productSchema);
