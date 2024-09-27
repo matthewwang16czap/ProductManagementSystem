@@ -43,7 +43,7 @@ function ChangePasswordPage() {
   return (
     <div className="signup-page">
       <Form
-        formName="Sign Up"
+        formName="Change Password"
         formValidations={formValidations}
         dispatchAction={updateUser}
       />
