@@ -41,7 +41,9 @@ const getAllProducts = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // Default page is 1
     const skip = (page - 1) * limit;
     const products = await Product.find().select('name price stock thumbnailUrl').limit(limit).skip(skip);
-    res.status(200).json(products);
+    const count = await Product.countDocuments();
+    console.log(count)
+    res.status(200).json({products:products, count: count});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -1,5 +1,5 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import searchIcon from "../assets/search.svg";
@@ -7,20 +7,36 @@ import personIcon from "../assets/person-circle.svg";
 import shopIcon from "../assets/shop.svg";
 import cartIcon from "../assets/cart.svg";
 
+
 import { getUser } from "../features/users/usersSlice";
+import { CheckoutPage } from '../features/users/CheckoutPage'
 
 function Layout() {
   const dispatch = useDispatch();
-  const location = useLocation();
   const { user, loading, error } = useSelector((state) => state.users);
+  const [open, setOpen] = useState(false)
+  const handleClick = () => {
+    setOpen(!open); // Toggle open state
+  };
+  
 
   useEffect(() => {
-    console.log(user, loading, error);
-  }, [location, user, loading, error]);
+    //console.log(user, loading, error);
+  }, [user, loading, error]);
 
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch]);
+
+  const overlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1040, // Behind the checkout page
+  };
 
   return (
     <div
@@ -28,8 +44,8 @@ function Layout() {
       style={{ paddingLeft: 0, paddingRight: 0 }}
     >
       <header
-        className="container-fluid text-center p-2"
-        style={{ backgroundColor: "#F0F8FF" }}
+        className="container-fluid text-center"
+        style={{ padding: "0.5em", backgroundColor: "#F0F8FF" }}
       >
         <div className="row g-1 justify-content-center">
           <div className="col-4">Management</div>
@@ -47,62 +63,15 @@ function Layout() {
               />
             </div>
           </div>
-          <div className="col-1 dropdown">
-            <button
-              type="button"
-              className="btn btn-link dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <img src={personIcon} alt="Me" />
-            </button>
-            {user ? (
-              <ul
-                className="dropdown-menu text-center"
-                style={{ minWidth: "inherit" }}
-              >
-                <li>
-                  <Link
-                    className="dropdown-item"
-                    to="/logout"
-                    state={{ from: location }}
-                  >
-                    Logout
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="dropdown-item"
-                    to="/user/changepassword"
-                  >
-                    Change Password
-                  </Link>
-                </li>
-              </ul>
-            ) : (
-              <ul
-                className="dropdown-menu text-center"
-                style={{ minWidth: "inherit" }}
-              >
-                <li>
-                  <Link
-                    className="dropdown-item"
-                    to="/login"
-                    state={{ from: location }}
-                  >
-                    Login
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </div>
           <div className="col-1">
-            {user &&
-              (user.role === "admin" ? (
-                <img src={shopIcon} alt="Shop" />
-              ) : (
-                <img src={cartIcon} alt="Cart" />
-              ))}
+            <img src={personIcon} alt="Me" />
+          </div>
+          <div className="col-1" onClick={handleClick}>
+            {user?.role === "admin" ? (
+              <img src={shopIcon} alt="Shop" />
+            ) : (
+              <img src={cartIcon} alt="Cart" />
+            )}
           </div>
         </div>
       </header>
@@ -110,14 +79,20 @@ function Layout() {
         <Outlet /> {/* This is where the routed components will be rendered */}
       </main>
       <footer
-        className="footer fixed-bottom text-center p-3"
-        style={{ backgroundColor: "#F0F8FF" }}
+        className="footer fixed-bottom text-center"
+        style={{ padding: "0.5em", backgroundColor: "#F0F8FF" }}
       >
         <div className="row g-1 justify-content-center">
           <div className="col-6">@2024 All Rights Reserved.</div>
           <div className="col-6">Contact Us.</div>
         </div>
       </footer>
+
+      {/* Background Overlay */}
+      {open && <div style={overlayStyle} onClick={() => setOpen(false)}></div>}
+
+  {/* Checkout Page */}
+  {open && <CheckoutPage onClose={() => setOpen(false)} />}
     </div>
   );
 }
