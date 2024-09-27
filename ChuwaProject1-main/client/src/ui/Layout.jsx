@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import searchIcon from "../assets/search.svg";
@@ -7,11 +7,18 @@ import personIcon from "../assets/person-circle.svg";
 import shopIcon from "../assets/shop.svg";
 import cartIcon from "../assets/cart.svg";
 
+
 import { getUser } from "../features/users/usersSlice";
+import { CheckoutPage } from '../features/users/CheckoutPage'
 
 function Layout() {
   const dispatch = useDispatch();
   const { user, loading, error } = useSelector((state) => state.users);
+  const [open, setOpen] = useState(false)
+  const handleClick = () => {
+    setOpen(!open); // Toggle open state
+  };
+  
 
   useEffect(() => {
     //console.log(user, loading, error);
@@ -20,6 +27,16 @@ function Layout() {
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch]);
+
+  const overlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1040, // Behind the checkout page
+  };
 
   return (
     <div
@@ -49,7 +66,7 @@ function Layout() {
           <div className="col-1">
             <img src={personIcon} alt="Me" />
           </div>
-          <div className="col-1">
+          <div className="col-1" onClick={handleClick}>
             {user?.role === "admin" ? (
               <img src={shopIcon} alt="Shop" />
             ) : (
@@ -70,6 +87,12 @@ function Layout() {
           <div className="col-6">Contact Us.</div>
         </div>
       </footer>
+
+      {/* Background Overlay */}
+      {open && <div style={overlayStyle} onClick={() => setOpen(false)}></div>}
+
+  {/* Checkout Page */}
+  {open && <CheckoutPage onClose={() => setOpen(false)} />}
     </div>
   );
 }

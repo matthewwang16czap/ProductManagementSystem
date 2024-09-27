@@ -54,12 +54,14 @@ const CheckOutPage = () => {
   };
 
   return (
-    <div className="container p-3" style={{ maxWidth: '600px' }}>
+    <div className="container-fluid p-3" style={{ maxWidth: '600px' }}>
+      {/* Header */}
       <header className="d-flex justify-content-between align-items-center mb-3">
         <h5>Cart ({cart.length})</h5>
         <button className="btn btn-outline-secondary" onClick={handleClose}>Close</button>
       </header>
 
+      {/* Cart Items */}
       <section className="mb-3">
         <ul className="list-unstyled">
           {cart.map((item, index) => (
@@ -82,6 +84,7 @@ const CheckOutPage = () => {
         </ul>
       </section>
 
+      {/* Discount Section */}
       <section className="mb-3">
         <div className="input-group">
           <input type="number" className="form-control" placeholder="Enter Discount" onChange={handleChange} />
@@ -89,6 +92,7 @@ const CheckOutPage = () => {
         </div>
       </section>
 
+      {/* Summary Section */}
       <section className="card p-3">
         <ul className="list-unstyled mb-0">
           <li className="d-flex justify-content-between">
@@ -110,6 +114,7 @@ const CheckOutPage = () => {
         </ul>
       </section>
 
+      {/* Checkout Button */}
       <button className="btn btn-primary w-100 mt-3">Continue to checkout</button>
     </div>
   );
