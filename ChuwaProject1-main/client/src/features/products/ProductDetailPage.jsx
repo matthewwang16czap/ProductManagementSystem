@@ -4,6 +4,7 @@ import { updateCartItem } from "../users/usersSlice";
 import { getProduct, updateProduct } from './productsSlice'
 import { useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
 
 function ProductDetailsPage(){
   const {productId} = useParams();
@@ -32,15 +33,16 @@ function ProductDetailsPage(){
   const handleChange = (e) =>{
     setInputValue(e.target.value)
   }
+  dispatch(getUser())
+  const { user } = useSelector((state) => state.user);
   const handleSubmit= () =>{
-    dispatch(getUser())
-    
-    const { user } = useSelector((state) => state.user);
     if (user.role === 'admin'){
       dispatch(updateCartItem({product:lastActionPayload, quantity:inputValue}))
     }else{
+      const navigate = useNavigate()
       lastActionPayload.description = inputValue
       dispatch(updateProduct(inputValue))
+      navigate('/products/create')
     } 
     setIsInput(true);
   }
@@ -130,7 +132,8 @@ function ProductDetailsPage(){
         <div>
           <button style={styles.button} onClick={handleAddProduct}>Add To Cart</button>
           {isInput ? (
-            <button style={styles.button} onClick={handleClick}>Edit</button>
+            <button style={styles.button} onClick={handleClick}>{
+              user.role === 'admin'? 'Edit': inputValue}</button>
           ) : (
             <div>
               <input style={styles.input} value={inputValue} onChange={(e) => handleChange(e)} />
