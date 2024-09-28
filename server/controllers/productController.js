@@ -69,7 +69,7 @@ const updateProduct = async (req, res) => {
       { new: true }
     );
     if (!updatedProduct) return res.status(404).json({ message: 'Product not found' });
-    res.status(200).json({ message: 'Product updated' });
+    res.status(200).json({ message: 'Product updated', product: updatedProduct });
   } catch (err) {
     if (err.name === 'ValidationError') res.status(400).json({ message: 'Invalid product data' });
     else if (err.name === 'CastError') res.status(400).json({ message: 'Invalid product ID' });

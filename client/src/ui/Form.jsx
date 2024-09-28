@@ -2,10 +2,18 @@ import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { useState, useRef } from "react";
 
-function Form({ formName, formValidations, dispatchAction }) {
+function Form({
+  formName,
+  formValidations,
+  dispatchAction,
+  submitButtonName,
+  initialFormData,
+  additionalFormData,
+}) {
   const [formData, setFormData] = useState(
     Object.keys(formValidations).reduce((acc, field) => {
-      acc[field] = "";
+      acc[field] =
+        initialFormData && initialFormData[field] ? initialFormData[field] : "";
       return acc;
     }, {})
   );
@@ -23,7 +31,7 @@ function Form({ formName, formValidations, dispatchAction }) {
     if (e.target.checkValidity()) {
       console.log("Form is valid");
       // Submit the form
-      dispatch(dispatchAction(formData));
+      dispatch(dispatchAction({...formData, ...additionalFormData}));
     } else {
       console.log("Form is invalid");
       formRef.current.className = "was-validated";
@@ -45,7 +53,10 @@ function Form({ formName, formValidations, dispatchAction }) {
             <div className="col-xs-10 col-sm-8 col-md-6">
               {content.type === "radio" && (
                 <div className="mb-3">
-                  <label className="form-check-label me-3" style={{display: "block"}}>
+                  <label
+                    className="form-check-label me-3"
+                    style={{ display: "block" }}
+                  >
                     {content.label}
                   </label>
                   {content.selections.map((selection) => (
@@ -82,7 +93,7 @@ function Form({ formName, formValidations, dispatchAction }) {
                     onChange={handleFormDataChange}
                     pattern={content.pattern}
                     required={content.required ?? true}
-                    style={{height: content.height ?? "10em"}}
+                    style={{ height: content.height ?? "10em" }}
                   />
                   <label htmlFor={field}>{content.label}</label>
                   <div className="invalid-feedback">
@@ -116,7 +127,7 @@ function Form({ formName, formValidations, dispatchAction }) {
           </div>
         ))}
         <button type="submit" className="btn btn-primary">
-          Submit
+          {submitButtonName ?? "Submit"}
         </button>
       </form>
     </div>
@@ -128,12 +139,16 @@ Form.propTypes = {
   formValidations: PropTypes.objectOf(
     PropTypes.shape({
       type: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
       pattern: PropTypes.string,
       failedMessage: PropTypes.string,
       selections: PropTypes.arrayOf(PropTypes.string),
     })
   ).isRequired,
   dispatchAction: PropTypes.func,
+  submitButtonName: PropTypes.string,
+  initialFormData: PropTypes.object,
+  additionalFormData: PropTypes.object,
 };
 
 export default Form;

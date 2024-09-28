@@ -2,14 +2,18 @@ import Form from "../../ui/Form";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { createProduct, uploadProductImage } from "./productsSlice";
+import {
+  getProduct,
+  createProduct,
+  updateProduct,
+  uploadProductImage,
+} from "./productsSlice";
 
-function CreateProductsPage() {
+function CreateEditProductsPage() {
   const [file, setFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
-  const { lastActionType, lastActionPayload, loading, error } = useSelector(
-    (state) => state.products
-  );
+  const { product, lastActionType, lastActionPayload, loading, error } =
+    useSelector((state) => state.products);
   const { user } = useSelector((state) => state.users);
 
   const dispatch = useDispatch();
@@ -17,24 +21,56 @@ function CreateProductsPage() {
   const location = useLocation();
 
   useEffect(() => {
-    console.log(lastActionType, lastActionPayload, loading, error);
+    // if the url is to edit, pre-polulate product details
+    if (/^\/products\/([^/]+)\/edit$/.test(location.pathname)) {
+      // get product details
+      dispatch(
+        getProduct({
+          productId: location.pathname.match(/^\/products\/([^/]+)\/edit$/)[1],
+        })
+      );
+    }
+  }, [dispatch, location]);
+
+  useEffect(() => {
+    if (/^\/products\/([^/]+)\/edit$/.test(location.pathname)) {
+      // get file from product
+      setImagePreview("/" + product?.imageUrl);
+    }
+  }, [product, location])
+
+  useEffect(() => {
+    console.log(
+      location,
+      product,
+      lastActionType,
+      lastActionPayload,
+      loading,
+      error
+    );
     // user should login
     if (!user?.role === "admin") {
       navigate("/login", { replace: true, from: location });
     }
-    // if product created, try upload product image
-    if (!loading && lastActionType?.includes("products/createProduct")) {
+
+    // if product has created or updated, try upload product image
+    if (
+      !loading &&
+      (lastActionType?.includes("products/createProduct") ||
+        lastActionType?.includes("products/updateProduct"))
+    ) {
       if (error) {
         window.alert(error);
-      } else if (lastActionPayload?.message === "Product created") {
-        dispatch(
-          uploadProductImage({
-            file: file,
-            productId: lastActionPayload.product._id,
-            imageType: file?.name.split(".").pop(),
-          })
-        );
-        // don't need to care about error about image uploading
+      } else if (lastActionPayload) {
+        if (file)
+          dispatch(
+            uploadProductImage({
+              file: file,
+              productId: lastActionPayload.product._id,
+              imageType: file?.name.split(".").pop(),
+            })
+          );
+        // ignore error about image uploading
         navigate(`/products/${lastActionPayload.product._id}`, {
           replace: true,
         });
@@ -93,9 +129,15 @@ function CreateProductsPage() {
     }
   };
 
+  if (loading) return <p>loading...</p>
+
   return (
     <div className="create-product-page text-center">
-      <h1 className="mb-3">Create a Product</h1>
+      <h1 className="mb-3">
+        {/^\/products\/([^/]+)\/edit$/.test(location.pathname)
+          ? "Update a Product"
+          : location.pathname === "/products/create" && "Create a Product"}
+      </h1>
       <form className="row" onSubmit={(e) => e.preventDefault()}>
         <div className="col-xs-10 col-sm-8 col-md-6 mx-auto mb-3">
           <input
@@ -114,17 +156,30 @@ function CreateProductsPage() {
             src={imagePreview}
             className="img-fluid"
             alt="Preview"
-            style={{maxWidth: "100%", maxHeight: "10em"}}
+            style={{ maxWidth: "100%", maxHeight: "10em" }}
           />
         </div>
       )}
-      <Form
-        formName=""
-        formValidations={formValidations}
-        dispatchAction={createProduct}
-      />
+      {/^\/products\/([^/]+)\/edit$/.test(location.pathname) && (
+        <Form
+          formName=""
+          formValidations={formValidations}
+          dispatchAction={updateProduct}
+          submitButtonName="save editing"
+          initialFormData={product}
+          additionalFormData={{productId: location.pathname.match(/^\/products\/([^/]+)\/edit$/)[1]}}
+        />
+      )}
+      {location.pathname === "/products/create" && (
+        <Form
+          formName=""
+          formValidations={formValidations}
+          dispatchAction={createProduct}
+          submitButtonName="create"
+        />
+      )}
     </div>
   );
 }
 
-export default CreateProductsPage;
+export default CreateEditProductsPage;
