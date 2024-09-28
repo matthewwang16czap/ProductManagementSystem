@@ -47,6 +47,15 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+const getProductsTotalNumber = async (req, res) => {
+  try {
+    const counts = await Product.countDocuments();
+    res.status(200).json(counts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Update a product by productId and userId from jwt token 
 const updateProduct = async (req, res) => {
   try {
@@ -93,6 +102,7 @@ module.exports = {
     createProduct,
     getProduct,
     getAllProducts,
+    getProductsTotalNumber,
     updateProduct,
     deleteProduct,
   };

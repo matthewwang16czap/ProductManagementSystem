@@ -26,7 +26,13 @@ export const getAllProducts = createAsyncThunk(
         method: "GET",
       });
       if (!response.ok) throw new Error(JSON.stringify(await response.json()));
-      return response.json();
+      const products = await response.json();
+      const response2 = await fetch(`${API_URL}/total`, {
+        method: "GET",
+      }); 
+      if (!response2.ok) throw new Error(JSON.stringify(await response2.json()));
+      const productsTotal = await response.json();
+      return {products, productsTotal};
     } catch (err) {
       console.error("Failed fetch request:", err);
       throw err;
@@ -150,7 +156,8 @@ const productsSlice = createSlice({
     loading: false,
     error: null,
     product: null,
-    products: null
+    products: null,
+    productsTotal: -1,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -167,11 +174,13 @@ const productsSlice = createSlice({
       .addCase(getAllProducts.pending, handlePending)
       .addCase(getAllProducts.fulfilled, (state, action) => {
         handleFulfilled(state, action);
-        state.products = action.payload;
+        state.products = action.payload.products;
+        state.productsTotal = action.payload.productsTotal;
       })
       .addCase(getAllProducts.rejected, (state, action) => {
         handleRejected(state, action);
         state.products = null;
+        state.productsTotal = -1;
       })
       .addCase(createProduct.pending, handlePending)
       .addCase(createProduct.fulfilled, handleFulfilled)
