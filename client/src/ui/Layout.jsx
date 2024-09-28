@@ -78,6 +78,14 @@ function Layout() {
                     Change Password
                   </Link>
                 </li>
+                {user?.role === "admin" && <li>
+                  <Link
+                    className="dropdown-item"
+                    to="/products/create"
+                  >
+                    List a product
+                  </Link>
+                </li>}
               </ul>
             ) : (
               <ul

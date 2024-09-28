@@ -45,7 +45,7 @@ function Form({ formName, formValidations, dispatchAction }) {
             <div className="col-xs-10 col-sm-8 col-md-6">
               {content.type === "radio" && (
                 <div className="mb-3">
-                  <label className="form-check-label me-3">
+                  <label className="form-check-label me-3" style={{display: "block"}}>
                     {content.label}
                   </label>
                   {content.selections.map((selection) => (
@@ -61,7 +61,7 @@ function Form({ formName, formValidations, dispatchAction }) {
                         value={selection}
                         checked={formData[field] === selection}
                         onChange={handleFormDataChange}
-                        required={true}
+                        required={content.required ?? true}
                       />
                       <label className="form-check-label" htmlFor={selection}>
                         {selection}
@@ -70,7 +70,27 @@ function Form({ formName, formValidations, dispatchAction }) {
                   ))}
                 </div>
               )}
-              {content.type !== "radio" && (
+              {content.type === "textarea" && (
+                <div className="form-floating has-validation mb-3">
+                  <textarea
+                    type={content.type}
+                    className="form-control"
+                    id={field}
+                    name={field}
+                    placeholder={field}
+                    value={formData[field]}
+                    onChange={handleFormDataChange}
+                    pattern={content.pattern}
+                    required={content.required ?? true}
+                    style={{height: content.height ?? "10em"}}
+                  />
+                  <label htmlFor={field}>{content.label}</label>
+                  <div className="invalid-feedback">
+                    {content.failedMessage}
+                  </div>
+                </div>
+              )}
+              {!["radio", "textarea"].includes(content.type) && (
                 <div className="form-floating has-validation mb-3">
                   <input
                     type={content.type}
@@ -81,7 +101,9 @@ function Form({ formName, formValidations, dispatchAction }) {
                     value={formData[field]}
                     onChange={handleFormDataChange}
                     pattern={content.pattern}
-                    required={true}
+                    min={content.min}
+                    step={content.step}
+                    required={content.required ?? true}
                   />
                   <label htmlFor={field}>{content.label}</label>
                   <div className="invalid-feedback">

@@ -108,12 +108,12 @@ export const deleteProduct = createAsyncThunk(
 
 export const uploadProductImage = createAsyncThunk(
   "products/uploadProductImage",
-  async ({ file, productId }) => {
+  async ({ file, productId, imageType }) => {
     const formData = new FormData();
     try {
       formData.append('productImage', file);
       const token = localStorage.getItem('jwtToken');
-      const response = await fetch(`${API_URL}/upload/${productId}`, {
+      const response = await fetch(`${API_URL}/upload/${productId}?imagetype=${imageType}`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${token}`,
