@@ -1,66 +1,75 @@
 import Form from "../../ui/Form";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import {
+  useNavigate,
+  useLocation,
+  useParams,
+  Navigate,
+} from "react-router-dom";
 import {
   getProduct,
   createProduct,
   updateProduct,
   uploadProductImage,
 } from "./productsSlice";
+import { getUser } from "../users/usersSlice";
 
 function CreateEditProductsPage() {
+  const { productId } = useParams();
   const [file, setFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
-  const { product, lastActionType, lastActionPayload, loading, error } =
-    useSelector((state) => state.products);
-  const { user } = useSelector((state) => state.users);
+  const {
+    product,
+    lastActionType,
+    lastActionPayload,
+    loading: productLoading,
+    error: productError,
+  } = useSelector((state) => state.products);
+  const {
+    user,
+    loading: userLoading,
+    error: userError,
+  } = useSelector((state) => state.users);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
+    // getUser to validate
+    dispatch(getUser());
+  }, [dispatch]);
+
+  useEffect(() => {
     // if the url is to edit, pre-polulate product details
-    if (/^\/products\/([^/]+)\/edit$/.test(location.pathname)) {
+    if (productId) {
       // get product details
       dispatch(
         getProduct({
-          productId: location.pathname.match(/^\/products\/([^/]+)\/edit$/)[1],
+          productId: productId,
         })
       );
     }
-  }, [dispatch, location]);
+  }, [dispatch, location, productId]);
 
   useEffect(() => {
-    if (/^\/products\/([^/]+)\/edit$/.test(location.pathname)) {
-      // get file from product
+    if (productId) {
+      // get file from product if update
       setImagePreview("/" + product?.imageUrl);
     }
-  }, [product, location])
+  }, [product, location, productId]);
 
   useEffect(() => {
-    console.log(
-      location,
-      product,
-      lastActionType,
-      lastActionPayload,
-      loading,
-      error
-    );
-    // user should login
-    if (!user?.role === "admin") {
-      navigate("/login", { replace: true, from: location });
-    }
-
+    // console.log(user, location, product, lastActionType, lastActionPayload);
     // if product has created or updated, try upload product image
     if (
-      !loading &&
+      !productLoading &&
       (lastActionType?.includes("products/createProduct") ||
         lastActionType?.includes("products/updateProduct"))
     ) {
-      if (error) {
-        window.alert(error);
+      if (productError) {
+        window.alert(productError);
       } else if (lastActionPayload) {
         if (file)
           dispatch(
@@ -129,14 +138,18 @@ function CreateEditProductsPage() {
     }
   };
 
-  if (loading) return <p>loading...</p>
+  if (userError || user?.role === "regular")
+    return <Navigate to="/login" replace={true} state={{ from: location }} />;
+
+  if (productId && (productError || product?.userId !== user?._id))
+    return <Navigate to="/error" replace={true} state={{ from: location }} />;
+
+  if (userLoading || productLoading) return <p>loading...</p>;
 
   return (
     <div className="create-product-page text-center">
       <h1 className="mb-3">
-        {/^\/products\/([^/]+)\/edit$/.test(location.pathname)
-          ? "Update a Product"
-          : location.pathname === "/products/create" && "Create a Product"}
+        {productId ? "Update a Product" : "Create a Product"}
       </h1>
       <form className="row" onSubmit={(e) => e.preventDefault()}>
         <div className="col-xs-10 col-sm-8 col-md-6 mx-auto mb-3">
@@ -160,17 +173,19 @@ function CreateEditProductsPage() {
           />
         </div>
       )}
-      {/^\/products\/([^/]+)\/edit$/.test(location.pathname) && (
+      {productId && (
         <Form
           formName=""
           formValidations={formValidations}
           dispatchAction={updateProduct}
           submitButtonName="save editing"
           initialFormData={product}
-          additionalFormData={{productId: location.pathname.match(/^\/products\/([^/]+)\/edit$/)[1]}}
+          additionalFormData={{
+            productId: productId,
+          }}
         />
       )}
-      {location.pathname === "/products/create" && (
+      {!productId && (
         <Form
           formName=""
           formValidations={formValidations}
