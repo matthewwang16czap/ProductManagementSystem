@@ -69,7 +69,8 @@ export const updateProduct = createAsyncThunk(
   async (updatedProduct) => {
     try {
       const token = localStorage.getItem('jwtToken');
-      const response = await fetch(`${API_URL}/${updatedProduct._id}`, {
+      console.log("here", updatedProduct);
+      const response = await fetch(`${API_URL}/${updatedProduct.productId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
