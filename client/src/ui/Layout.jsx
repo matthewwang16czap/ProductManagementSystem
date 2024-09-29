@@ -7,19 +7,20 @@ import personIcon from "../assets/person-circle.svg";
 import shopIcon from "../assets/shop.svg";
 import cartIcon from "../assets/cart.svg";
 
-import { getUser } from "../features/users/usersSlice";
+import { getUser, getCart } from "../features/users/usersSlice";
 
 function Layout() {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { user, loading, error } = useSelector((state) => state.users);
+  const { user, cart, loading, error } = useSelector((state) => state.users);
 
   useEffect(() => {
-    console.log(user, loading, error);
-  }, [location, user, loading, error]);
+    console.log(user, cart, loading, error);
+  }, [cart, user, loading, error]);
 
   useEffect(() => {
     dispatch(getUser());
+    dispatch(getCart());
   }, [dispatch]);
 
   return (

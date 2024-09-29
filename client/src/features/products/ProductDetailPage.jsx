@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { getUser, updateCartItem } from "../users/usersSlice";
-import ButtonInputButton from "../../ui/ButtonInputButton";
+import AddCartComponent from "./AddCartComponent";
 import { getProduct, updateProduct } from "./productsSlice";
 import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
 
@@ -62,7 +62,7 @@ function ProductDetailsPage() {
               <Link to={location.pathname + "/edit"}>edit</Link>
             </button>
           ) : (
-            <ButtonInputButton />
+            <AddCartComponent productId={productId} />
           )}
         </div>
       </div>

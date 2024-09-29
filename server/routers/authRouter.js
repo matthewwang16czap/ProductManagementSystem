@@ -16,7 +16,7 @@ router.post('/login', async (req, res, next) => {
       user: {
         id: user._id,
         role: user.role,
-        cart: user.user,
+        cart: user.cart,
         shop: user.shop
       }
     };

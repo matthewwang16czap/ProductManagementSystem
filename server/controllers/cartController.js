@@ -8,10 +8,10 @@ const getCart = async (req, res) => {
   try {
     const cart = await Cart.findById(req.user.cart);
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
-    // trace name, price, stock and thumbnailUrl for each item
+    // trace name, price, stock and imageUrl for each item
     const returnItems = await Promise.all(
       cart.items.map(async item => {
-        const product = await Product.findById(item.productId).select('name price stock thumbnailUrl');
+        const product = await Product.findById(item.productId).select('name price stock imageUrl');
         return {...item, ...product.toObject()};
       })
     );
