@@ -38,9 +38,9 @@ function ProductDetailsPage() {
     }
   }, [product, productId]);
 
-  if (userLoading || productLoading) {
-    return <p>loading...</p>
-  }
+  // if (userLoading || productLoading) {
+  //   return <p>loading...</p>
+  // }
 
   return (
     <div className="product-detail-page text-center justify-content-center">
