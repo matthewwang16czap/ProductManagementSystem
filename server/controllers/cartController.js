@@ -15,6 +15,9 @@ const getCart = async (req, res) => {
       .exec();
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 
+    // Filter out items with invalid productId or unavailable product
+    cart.items = cart.items.filter((item) => item.productId);
+
     // Loop over items to compare stock with quantity
     cart.items.forEach((item) => {
       const availableStock = item.productId.stock;
