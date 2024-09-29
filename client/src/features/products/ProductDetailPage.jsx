@@ -1,15 +1,14 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { getUser, updateCartItem } from "../users/usersSlice";
+import { getUser } from "../users/usersSlice";
 import AddCartComponent from "./AddCartComponent";
-import { getProduct, updateProduct } from "./productsSlice";
+import { getProduct } from "./productsSlice";
 import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
 
 function ProductDetailsPage() {
   const { productId } = useParams();
   const [productImageView, setProductImageView] = useState("");
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const {
     product,
@@ -39,8 +38,12 @@ function ProductDetailsPage() {
     }
   }, [product, productId]);
 
+  if (userLoading || productLoading) {
+    return <p>loading...</p>
+  }
+
   return (
-    <div className="product-detail-page text-center">
+    <div className="product-detail-page text-center justify-content-center">
       <h1 className="mb-3">Product Detail</h1>
       <div className="row">
         <div className="col-xs-12 col-sm-12 col-md-6 mb-3">

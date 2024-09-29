@@ -54,35 +54,51 @@ function AddCartComponent({ productId }) {
     return <p>loading...</p>;
   }
 
+  if (cartItem?.quantity) {
+    return (
+      <div className="input-group mb-3 justify-content-center">
+        <button
+          className="btn btn-outline-secondary"
+          type="button"
+          id="button-addon-left"
+          onMouseDown={deleteQuantity}
+        >
+          -
+        </button>
+        <input
+          type="text"
+          className="form-control"
+          placeholder=""
+          aria-label="Example text with button addon"
+          aria-describedby="input-between-button"
+          min="0"
+          step="1"
+          style={{ maxWidth: "4em" }}
+          value={quantity}
+          onChange={handleChange} // Update the local state on every change
+          onBlur={handleBlur} // Dispatch the update when the user leaves the input field
+        />
+        <button
+          className="btn btn-outline-secondary"
+          type="button"
+          id="button-addon-right"
+          onMouseDown={addQuantity}
+        >
+          +
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="input-group mb-3">
-      <button
-        className="btn btn-outline-secondary"
-        type="button"
-        id="button-addon-left"
-        onMouseDown={deleteQuantity}
-      >
-        -
-      </button>
-      <input
-        type="text"
-        className="form-control"
-        placeholder=""
-        aria-label="Example text with button addon"
-        aria-describedby="input-between-button"
-        min="0"
-        step="1"
-        value={quantity}
-        onChange={handleChange} // Update the local state on every change
-        onBlur={handleBlur} // Dispatch the update when the user leaves the input field
-      />
+    <div className="input-group mb-3 justify-content-center">
       <button
         className="btn btn-outline-secondary"
         type="button"
         id="button-addon-right"
         onMouseDown={addQuantity}
       >
-        +
+        add to cart
       </button>
     </div>
   );
@@ -90,6 +106,6 @@ function AddCartComponent({ productId }) {
 
 AddCartComponent.propTypes = {
   productId: PropTypes.string.isRequired,
-}
+};
 
 export default AddCartComponent;
