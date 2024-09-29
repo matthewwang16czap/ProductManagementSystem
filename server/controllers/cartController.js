@@ -1,62 +1,76 @@
-const User = require('../models/User'); 
-const Cart = require('../models/Cart'); 
-const Product = require('../models/Product'); 
+const User = require("../models/User");
+const Cart = require("../models/Cart");
+const Product = require("../models/Product");
 
 // Get a user cart by id from jwt token
 // will update cart if quantity > stock
 const getCart = async (req, res) => {
   try {
-    const cart = await Cart.findById(req.user.cart);
-    if (!cart) return res.status(404).json({ message: 'Cart not found' });
-    // trace name, price, stock and imageUrl for each item
-    const returnItems = await Promise.all(
-      cart.items.map(async item => {
-        const product = await Product.findById(item.productId).select('name price stock imageUrl');
-        return {...item, ...product.toObject()};
+    const cart = await Cart.findById(req.user.cart)
+      .populate({
+        path: "items.productId",
+        model: "Product",
+        select: "name price stock imageUrl",
       })
-    );
-    // update quantity refer to stock
-    cart.items = cart.items.map((item, idx) => 
-      ({...item, quantity: Math.min(item.quantity, returnItems[idx].stock)})
-    );
+      .exec();
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+    // Loop over items to compare stock with quantity
+    cart.items.forEach((item) => {
+      const availableStock = item.productId.stock;
+
+      // Update quantity if it's more than the stock
+      if (item.quantity > availableStock) {
+        item.quantity = availableStock;
+      }
+    });
+
+    // filter out 0 quantity
+    cart.items = cart.items.filter((item) => item.quantity);
+
     await cart.save();
-    returnItems = returnItems.map(item => 
-      ({...item, quantity: Math.min(item.quantity, item.stock)})
-    );
-    res.status(200).json(returnItems);
+
+    res.status(200).json(cart.items);
   } catch (err) {
-    if (err.name === 'CastError') res.status(400).json({ message: 'Invalid user ID' });
+    if (err.name === "CastError")
+      res.status(400).json({ message: "Invalid user ID" });
     else res.status(500).json({ message: err.message });
   }
 };
 
 // Update a cart item by id from jwt token and productId and quantity
 const updateCartItem = async (req, res) => {
+  console.log(req.body);
+  const { productId, quantity } = req.body;
+  if (!Number.isInteger(quantity) || quantity < 0) {
+    return res
+      .status(400)
+      .json({ message: "Quantity must be a positive integer" });
+  }
   try {
-    const cart = await Cart.findById(req.user.cart);
-    if (!cart) return res.status(404).json({ message: 'Cart not found' });
-    // get item to be updated
-    const existingItem = cart.items.find(item => item.productId.toString() === req.body.productId);
-    if (existingItem) {
-      if ('quantity' in req.body) {
-        // update quantity if product exists in the cart
-        // when quantity=0 it pruely means out of stock
-        existingItem.quantity = req.body.quantity;
-      }
-      else {
-        // if no quantity provided, remove it
-        cart.items.pull({ productId: req.body.productId });
-      }
-    } 
-    else {
-      // add new item to the cart
-      cart.items.push({ productId: req.body.productId, quantity: req.body.quantity });
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
     }
+    const cart = await Cart.findById(req.user.cart);
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+    // Check if the product is already in the cart
+    const cartItem = cart.items.find(item => item.productId.toString() === productId);
+
+    if (cartItem) {
+      // Update the existing item's quantity
+      cartItem.quantity = quantity;
+    } else {
+      // Add a new item to the cart
+      cart.items.push({ productId, quantity });
+    }
+
     await cart.save();
     // return success
-    res.status(200).json({ message: 'Cart updated product', newCart: cart });
+    res.status(200).json({ message: "Cart updated product", newCart: cart });
   } catch (err) {
-    if (err.name === 'CastError') res.status(400).json({ message: 'Invalid user ID' });
+    if (err.name === "CastError")
+      res.status(400).json({ message: "Invalid user ID" });
     else res.status(500).json({ message: err.message });
   }
 };

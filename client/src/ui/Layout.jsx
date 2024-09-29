@@ -12,15 +12,15 @@ import { getUser, getCart } from "../features/users/usersSlice";
 function Layout() {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { user, cart, loading, error } = useSelector((state) => state.users);
+  const { user, cart, lastActionType, loading, error } = useSelector((state) => state.users);
 
   useEffect(() => {
-    console.log(user, cart, loading, error);
+    console.log(user, cart, lastActionType, loading, error);
   }, [cart, user, loading, error]);
 
   useEffect(() => {
     dispatch(getUser());
-    dispatch(getCart());
+    dispatch(getCart())
   }, [dispatch]);
 
   return (
