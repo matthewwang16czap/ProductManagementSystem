@@ -52,10 +52,17 @@ function ProductDetailsPage() {
             style={{ maxWidth: "90%", maxHeight: "50vh" }}
           />
         </div>
-        <div className="col mb-3" style={{ wordWrap: "break-word" }}>
-          <h6 style={{ color: "grey" }}>{product?.category}</h6>
-          <h2 style={{ color: "black" }}>{product?.name}</h2>
-          <pre style={{ color: "black" }}>{product?.description}</pre>
+        <div className="col-xs-12 col-sm-12 col-md-6 mb-3">
+          <h6 style={{ color: "grey", overflowWrap: "break-word" }}>
+            {product?.category}
+          </h6>
+          <h2 style={{ color: "black", overflowWrap: "break-word" }}>
+            {product?.name}
+          </h2>
+          <div style={{ whiteSpace: "pre-wrap", overflowWrap: "break-word" }}>
+            <p>{product?.description}</p>
+          </div>
+
           <h3 style={{ color: "black" }}>$ {product?.price}</h3>
           <h5 style={{ color: "red" }}>remaining: {product?.stock}</h5>
           {user?._id === product?.userId ? (
@@ -73,7 +80,7 @@ function ProductDetailsPage() {
                 type="button"
                 className="btn btn-danger mb-3"
                 onMouseDown={() => {
-                  dispatch(deleteProduct({ productId })); 
+                  dispatch(deleteProduct({ productId }));
                 }}
               >
                 delete

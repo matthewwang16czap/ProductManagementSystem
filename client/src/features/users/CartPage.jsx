@@ -29,10 +29,6 @@ const CartPage = () => {
     setTotal(newSubtotal * 1.1 - discount); // Assuming 10% tax
   }, [cart, discount]);
 
-  const handleClose = () => {
-    navigate("/products");
-  };
-
   const handleEnterCouponChange = (e) => {
     setCoupon(e.target.value);
   };
@@ -60,9 +56,6 @@ const CartPage = () => {
       {/* Header */}
       <header className="d-flex justify-content-between align-items-center mb-3">
         <h5>Cart ({cart?.length})</h5>
-        <button className="btn btn-outline-secondary" onClick={handleClose}>
-          Close
-        </button>
       </header>
 
       {/* Cart Items */}
