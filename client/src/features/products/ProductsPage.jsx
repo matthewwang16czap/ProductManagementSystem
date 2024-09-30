@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { getAllProducts, deleteProduct } from "./productsSlice";
 import { getUser } from "../users/usersSlice";
 import AddCartComponent from "./AddCartComponent";
@@ -8,6 +8,10 @@ import AddCartComponent from "./AddCartComponent";
 const ProductsPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get("page");
+  const limit = searchParams.get("limit");
+
   const {
     products,
     productsTotal,
@@ -19,12 +23,11 @@ const ProductsPage = () => {
     loading: userLoading,
     error: userError,
   } = useSelector((state) => state.users);
-  const [page, setPage] = useState(1);
   const total = Math.ceil(productsTotal / 10);
 
   useEffect(() => {
-    dispatch(getAllProducts({ page: page, limit: 10 }));
-  }, [dispatch, page]);
+    dispatch(getAllProducts({ page: page || 0, limit: limit || 10 }));
+  }, [dispatch, page, limit]);
 
   useEffect(() => {
     dispatch(getUser());
@@ -32,19 +35,13 @@ const ProductsPage = () => {
 
   useEffect(() => {
     if (lastActionType?.includes("products/deleteProduct")) {
-      dispatch(getAllProducts({ page: page, limit: 10 })); // Refresh after product is deleted
+      dispatch(getAllProducts({ page: page || 0, limit: limit || 10 })); // Refresh after product is deleted
     }
-  }, [lastActionType, dispatch, page]);
+  }, [lastActionType, dispatch, page, limit]);
 
   useEffect(() => {
     console.log(products, productsTotal, productsError);
   }, [products, productsTotal, productsError]);
-
-  const handlePages = (value) => {
-    if (value >= 1 && value <= total) {
-      setPage(value);
-    }
-  };
 
   return (
     <div>
@@ -128,7 +125,7 @@ const ProductsPage = () => {
             <li className="page-item">
               <button
                 className="page-link"
-                onClick={() => handlePages(page - 1)}
+                onClick={() => navigate(`/products?page=${Math.max(1, page-1)}`)}
               >
                 Previous
               </button>
@@ -137,7 +134,7 @@ const ProductsPage = () => {
               <li key={index} className="page-item">
                 <button
                   className="page-link"
-                  onClick={() => handlePages(index + 1)}
+                  onClick={() => navigate(`/products?page=${index+1}`)}
                 >
                   {index + 1}
                 </button>
@@ -146,7 +143,7 @@ const ProductsPage = () => {
             <li className="page-item">
               <button
                 className="page-link"
-                onClick={() => handlePages(page + 1)}
+                onClick={() => navigate(`/products?page=${Math.min(total, page+1)}`)}
               >
                 Next
               </button>
