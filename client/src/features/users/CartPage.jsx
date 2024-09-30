@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getCart, updateCartItem } from "../users/usersSlice";
+import { getCart, updateCartItem, checkOut } from "../users/usersSlice";
 import AddCartComponent from "../products/AddCartComponent";
 
 const CartPage = () => {
@@ -142,7 +142,10 @@ const CartPage = () => {
       </section>
 
       {/* Checkout Button */}
-      <button className="btn btn-primary w-100 mt-3">
+      <button
+        className="btn btn-primary w-100 mt-3"
+        onMouseDown={() => dispatch(checkOut())}
+      >
         Continue to checkout
       </button>
     </div>

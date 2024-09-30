@@ -58,7 +58,9 @@ const updateCartItem = async (req, res) => {
     const cart = await Cart.findById(req.user.cart);
     if (!cart) return res.status(404).json({ message: "Cart not found" });
     // Check if the product is already in the cart
-    const cartItem = cart.items.find(item => item.productId.toString() === productId);
+    const cartItem = cart.items.find(
+      (item) => item.productId.toString() === productId
+    );
 
     if (cartItem) {
       // Update the existing item's quantity
@@ -78,7 +80,28 @@ const updateCartItem = async (req, res) => {
   }
 };
 
+const checkOut = async (req, res, next) => {
+  try {
+    const cart = await Cart.findById(req.user.cart);
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+    // Clear the items array
+    cart.items = [];
+    // Save the cleared cart
+    await cart.save();
+    // return success
+    res.status(200).json({ message: "Check out success" });
+  } catch (err) {
+    if (err.name === "CastError") {
+      res.status(400).json({ message: "Invalid user ID" });
+    } else {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
 module.exports = {
   getCart,
   updateCartItem,
+  checkOut,
 };

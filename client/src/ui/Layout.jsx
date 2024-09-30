@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import searchIcon from "../assets/search.svg";
@@ -9,10 +9,16 @@ import cartIcon from "../assets/cart.svg";
 
 import { getUser, getCart } from "../features/users/usersSlice";
 
+import CartPage from "../features/users/CartPage";
+import ShopPage from "../features/users/ShopPage";
+
 function Layout() {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { user, cart, lastActionType, loading, error } = useSelector((state) => state.users);
+  const { user, cart, lastActionType, loading, error } = useSelector(
+    (state) => state.users
+  );
+  const [openCartShop, setOpenCartShop] = useState(false);
 
   useEffect(() => {
     console.log(user, cart, lastActionType, loading, error);
@@ -20,8 +26,10 @@ function Layout() {
 
   useEffect(() => {
     dispatch(getUser());
-    dispatch(getCart())
+    dispatch(getCart());
   }, [dispatch]);
+
+  const handleOpenCartShop = () => setOpenCartShop(!openCartShop);
 
   return (
     <div
@@ -72,21 +80,17 @@ function Layout() {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    className="dropdown-item"
-                    to="/user/changepassword"
-                  >
+                  <Link className="dropdown-item" to="/user/changepassword">
                     Change Password
                   </Link>
                 </li>
-                {user?.role === "admin" && <li>
-                  <Link
-                    className="dropdown-item"
-                    to="/products/create"
-                  >
-                    List a product
-                  </Link>
-                </li>}
+                {user?.role === "admin" && (
+                  <li>
+                    <Link className="dropdown-item" to="/products/create">
+                      List a product
+                    </Link>
+                  </li>
+                )}
               </ul>
             ) : (
               <ul
@@ -106,17 +110,34 @@ function Layout() {
             )}
           </div>
           <div className="col-1">
-            {user &&
-              (user.role === "admin" ? (
-                <img src={shopIcon} alt="Shop" />
-              ) : (
-                <img src={cartIcon} alt="Cart" />
-              ))}
+            <button
+              type="button"
+              className="btn btn-link"
+              onMouseDown={handleOpenCartShop}
+            >
+              {user &&
+                (user.role === "admin" ? (
+                  <img src={shopIcon} alt="Shop" />
+                ) : (
+                  <img src={cartIcon} alt="Cart" />
+                ))}
+            </button>
           </div>
         </div>
       </header>
       <main className="container-fluid mt-3">
-        <Outlet /> {/* This is where the routed components will be rendered */}
+        {user && openCartShop ? (
+          <div className="row">
+            <div className="col-sx-0 col-md-6">
+              <Outlet />
+            </div>
+            <div className="col">
+              {user.role === "admin" ? <ShopPage /> : <CartPage />}
+            </div>
+          </div>
+        ) : (
+          <Outlet />
+        )}
       </main>
       <footer
         className="footer fixed-bottom text-center p-3"

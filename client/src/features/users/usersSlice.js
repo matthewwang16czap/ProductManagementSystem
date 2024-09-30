@@ -135,6 +135,29 @@ export const updateCartItem = createAsyncThunk(
   }
 );
 
+// item at least as productId, with or without quantity
+export const checkOut = createAsyncThunk(
+  "users/checkOut",
+  async (item) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch(`${API_URL}/cart/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(item),
+      });
+      if (!response.ok) throw new Error(JSON.stringify(await response.json()));
+      return response.json();
+    } catch (err) {
+      console.error("Failed fetch request:", err);
+      throw err;
+    }
+  }
+);
+
 // Helper function to handle status
 const handlePending = (state) => {
   state.loading = true;
@@ -206,7 +229,13 @@ const usersSlice = createSlice({
       })
       .addCase(updateCartItem.pending, handlePending)
       .addCase(updateCartItem.fulfilled, handleFulfilled)
-      .addCase(updateCartItem.rejected, handleRejected);
+      .addCase(updateCartItem.rejected, handleRejected)
+      .addCase(checkOut.pending, handlePending)
+      .addCase(checkOut.fulfilled, (state, action) => {
+        handleFulfilled(state, action);
+        state.cart = [];
+      })
+      .addCase(checkOut.rejected, handleRejected);
   },
 });
 
