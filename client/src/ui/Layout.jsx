@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -15,6 +15,7 @@ const ShopPage = lazy(() => import("../features/users/ShopPage"));
 function Layout() {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, cart, shop, lastActionType, loading, error } = useSelector(
     (state) => state.users
   );
@@ -40,7 +41,7 @@ function Layout() {
         style={{ backgroundColor: "#F0F8FF" }}
       >
         <div className="row g-1 justify-content-center">
-          <div className="col-4">Management</div>
+          <div className="col-4" onMouseDown={() => navigate("./products")}>Management</div>
           <div className="col-6">
             <div className="input-group input-group-sm">
               <span className="input-group-text" id="search-button">
