@@ -10,13 +10,13 @@ const getShop = async (req, res) => {
       .populate({
         path: 'items.productId',
         model: 'Product',
-        select: 'name price stock thumbnailUrl',
+        select: 'name price stock imageUrl',
       })
       .exec();
 
     if (!shop) return res.status(404).json({ message: 'Shop not found' });
 
-    res.status(200).json(shop);
+    res.status(200).json(shop.items);
   } catch (err) {
     if (err.name === 'CastError') res.status(400).json({ message: 'Invalid product ID' });
     else res.status(500).json({ message: err.message });

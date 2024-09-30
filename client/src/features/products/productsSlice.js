@@ -190,7 +190,10 @@ const productsSlice = createSlice({
       .addCase(updateProduct.fulfilled, handleFulfilled)
       .addCase(updateProduct.rejected, handleRejected)
       .addCase(deleteProduct.pending, handlePending)
-      .addCase(deleteProduct.fulfilled, handleFulfilled)
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        handleFulfilled(state, action);
+        state.product = null;
+      })
       .addCase(deleteProduct.rejected, handleRejected)
       .addCase(uploadProductImage.pending, handlePending)
       .addCase(uploadProductImage.fulfilled, handleFulfilled)

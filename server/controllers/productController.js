@@ -12,7 +12,7 @@ const createProduct = async (req, res) => {
     const newProduct = new Product({...req.body, userId: req.user.id});
     await newProduct.save();
     // add to creater's shop as well
-    shop.items.push(newProduct._id);
+    shop.items.push({productId: newProduct._id});
     await shop.save();
     // return success
     res.status(201).json({ message: 'Product created', product: newProduct });

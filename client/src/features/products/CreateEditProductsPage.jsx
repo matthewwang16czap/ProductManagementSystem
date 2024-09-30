@@ -13,7 +13,7 @@ import {
   updateProduct,
   uploadProductImage,
 } from "./productsSlice";
-import { getUser } from "../users/usersSlice";
+import { getUser, getShop } from "../users/usersSlice";
 
 function CreateEditProductsPage() {
   const { productId } = useParams();
@@ -80,6 +80,8 @@ function CreateEditProductsPage() {
             })
           );
         // ignore error about image uploading
+        // update shop
+        dispatch(getShop());
         navigate(`/products/${lastActionPayload.product._id}`, {
           replace: true,
         });

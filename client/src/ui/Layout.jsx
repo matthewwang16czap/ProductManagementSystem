@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import searchIcon from "../assets/search.svg";
@@ -7,26 +7,25 @@ import personIcon from "../assets/person-circle.svg";
 import shopIcon from "../assets/shop.svg";
 import cartIcon from "../assets/cart.svg";
 
-import { getUser, getCart } from "../features/users/usersSlice";
+import { getUser} from "../features/users/usersSlice";
 
-import CartPage from "../features/users/CartPage";
-import ShopPage from "../features/users/ShopPage";
+const CartPage = lazy(() => import("../features/users/CartPage"));
+const ShopPage = lazy(() => import("../features/users/ShopPage"));
 
 function Layout() {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { user, cart, lastActionType, loading, error } = useSelector(
+  const { user, cart, shop, lastActionType, loading, error } = useSelector(
     (state) => state.users
   );
   const [openCartShop, setOpenCartShop] = useState(false);
 
   useEffect(() => {
-    console.log(user, cart, lastActionType, loading, error);
-  }, [cart, user, loading, error]);
+    console.log(user, cart, shop, lastActionType, loading, error);
+  }, [user, cart, lastActionType, shop, loading, error]);
 
   useEffect(() => {
     dispatch(getUser());
-    dispatch(getCart());
   }, [dispatch]);
 
   const handleOpenCartShop = () => setOpenCartShop(!openCartShop);

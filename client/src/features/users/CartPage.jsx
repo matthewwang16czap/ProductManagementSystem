@@ -68,8 +68,8 @@ const CartPage = () => {
       {/* Cart Items */}
       <section className="mb-3">
         <ul className="list-unstyled">
-          {cart?.map((item, index) => (
-            <li key={index} className="card mb-2 p-2">
+          {cart?.map((item) => (
+            <li key={item.productId._id} className="card mb-2 p-2">
               <div className="d-flex text-center">
                 <img
                   src={"/" + item.productId.imageUrl}

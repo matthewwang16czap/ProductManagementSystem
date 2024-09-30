@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { getUser } from "../users/usersSlice";
+import { getUser, getShop } from "../users/usersSlice";
 import AddCartComponent from "./AddCartComponent";
 import { getProduct, deleteProduct } from "./productsSlice";
 import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
@@ -10,6 +10,7 @@ function ProductDetailsPage() {
   const [productImageView, setProductImageView] = useState("");
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const {
     product,
     loading: productLoading,
@@ -28,10 +29,6 @@ function ProductDetailsPage() {
   }, [dispatch, productId]);
 
   useEffect(() => {
-    console.log(product);
-  }, [product]);
-
-  useEffect(() => {
     if (productId) {
       // get file from product if update
       setProductImageView("/" + product?.imageUrl);
@@ -41,7 +38,7 @@ function ProductDetailsPage() {
   // if (userLoading || productLoading) {
   //   return <p>loading...</p>
   // }
-  if (productError) return <p>product not found</p>;
+  if (!product) return <p>product not found</p>;
 
   return (
     <div className="product-detail-page text-center justify-content-between">
@@ -61,7 +58,7 @@ function ProductDetailsPage() {
           <pre style={{ color: "black" }}>{product?.description}</pre>
           <h3 style={{ color: "black" }}>$ {product?.price}</h3>
           <h5 style={{ color: "red" }}>remaining: {product?.stock}</h5>
-          {user?.role === "admin" ? (
+          {user?._id === product?.userId ? (
             <div>
               <button type="button" className="btn btn-light mb-3">
                 <Link
@@ -75,7 +72,9 @@ function ProductDetailsPage() {
               <button
                 type="button"
                 className="btn btn-danger mb-3"
-                onMouseDown={() => dispatch(deleteProduct({ productId }))}
+                onMouseDown={() => {
+                  dispatch(deleteProduct({ productId })); 
+                }}
               >
                 delete
               </button>
