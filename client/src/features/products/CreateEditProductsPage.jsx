@@ -144,7 +144,7 @@ function CreateEditProductsPage() {
     return <Navigate to="/login" replace={true} state={{ from: location }} />;
 
   if (productId && (productError || product?.userId !== user?._id))
-    return <Navigate to="/error" replace={true} state={{ from: location }} />;
+    return <p>error</p>;
 
   if (userLoading || productLoading) return <p>loading...</p>;
 

@@ -31,7 +31,7 @@ export const getAllProducts = createAsyncThunk(
         method: "GET",
       }); 
       if (!response2.ok) throw new Error(JSON.stringify(await response2.json()));
-      const productsTotal = await response.json();
+      const productsTotal = await response2.json();
       return {products, productsTotal};
     } catch (err) {
       console.error("Failed fetch request:", err);
