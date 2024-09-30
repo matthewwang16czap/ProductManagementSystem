@@ -82,12 +82,26 @@ const updateCartItem = async (req, res) => {
 
 const checkOut = async (req, res, next) => {
   try {
-    const cart = await Cart.findById(req.user.cart);
+    const cart = await Cart.findById(req.user.cart)
+      .populate({
+        path: "items.productId",
+        model: "Product",
+        select: "stock",
+      })
+      .exec();
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 
-    // Clear the items array
+    // Loop over items to remove stock
+    for (const item of cart.items) {
+      if (item.productId) {
+        item.productId.stock = Math.max(
+          0,
+          item.productId.stock - item.quantity
+        );
+        await item.productId.save();
+      }
+    }
     cart.items = [];
-    // Save the cleared cart
     await cart.save();
     // return success
     res.status(200).json({ message: "Check out success" });

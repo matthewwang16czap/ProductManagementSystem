@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { getCart, updateCartItem, checkOut } from "../users/usersSlice";
 import AddCartComponent from "../products/AddCartComponent";
 
@@ -74,11 +74,15 @@ const CartPage = () => {
                 <img
                   src={"/" + item.productId.imageUrl}
                   alt={item.productId.name}
-                  style={{ width: "6em", height: "6em", objectFit: "cover" }}
+                  style={{ width: "6em", height: "6em", objectFit: "contain" }}
                   className="me-3"
                 />
                 <div className="flex-grow-1">
-                  <h6>{item.productId.name}</h6>
+                  <h6>
+                    <Link to={`/products/${item.productId._id}`}>
+                      {item.productId.name}
+                    </Link>
+                  </h6>
                   <AddCartComponent productId={item.productId._id} />
                   <div className="text-muted">${item.productId.price}</div>
                 </div>
@@ -144,7 +148,11 @@ const CartPage = () => {
       {/* Checkout Button */}
       <button
         className="btn btn-primary w-100 mt-3"
-        onMouseDown={() => dispatch(checkOut())}
+        onMouseDown={() => {
+          dispatch(checkOut());
+          window.alert("You have checkout!");
+          navigate("/products");
+        }}
       >
         Continue to checkout
       </button>
