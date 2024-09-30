@@ -128,7 +128,7 @@ function Layout() {
       <main className="container-fluid mt-3">
         {user && openCartShop ? (
           <div className="row">
-            <div className="col-sx-0 col-md-6">
+            <div className="col-sx-0 col-md-6" style={{paddingBottom: "6em"}}>
               <Outlet />
             </div>
             <div className="col">
