@@ -97,6 +97,7 @@ const ProductsPage = () => {
   const {
     products,
     productsTotal,
+    lastActionType,
     error: productsError,
   } = useSelector((state) => state.products);
   const {
@@ -114,6 +115,12 @@ const ProductsPage = () => {
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (lastActionType?.includes("products/deleteProduct")) {
+      dispatch(getAllProducts({ page: page, limit: 10 })); // Refresh after product is deleted
+    }
+  }, [lastActionType, dispatch, page]);
 
   useEffect(() => {
     console.log(products, productsTotal, productsError);
