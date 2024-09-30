@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { getUser } from "../users/usersSlice";
 import AddCartComponent from "./AddCartComponent";
-import { getProduct } from "./productsSlice";
+import { getProduct, deleteProduct } from "./productsSlice";
 import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
 
 function ProductDetailsPage() {
@@ -41,9 +41,10 @@ function ProductDetailsPage() {
   // if (userLoading || productLoading) {
   //   return <p>loading...</p>
   // }
+  if (productError) return <p>product not found</p>;
 
   return (
-    <div className="product-detail-page text-center justify-content-center">
+    <div className="product-detail-page text-center justify-content-between">
       <h1 className="mb-3">Product Detail</h1>
       <div className="row">
         <div className="col-xs-12 col-sm-12 col-md-6 mb-3">
@@ -61,9 +62,24 @@ function ProductDetailsPage() {
           <h3 style={{ color: "black" }}>$ {product?.price}</h3>
           <h5 style={{ color: "red" }}>remaining: {product?.stock}</h5>
           {user?.role === "admin" ? (
-            <button type="button" className="btn btn-light">
-              <Link to={location.pathname + "/edit"}>edit</Link>
-            </button>
+            <div>
+              <button type="button" className="btn btn-light mb-3">
+                <Link
+                  to={location.pathname + "/edit"}
+                  style={{ textDecoration: "none" }}
+                >
+                  edit
+                </Link>
+              </button>
+              <div className="col"></div>
+              <button
+                type="button"
+                className="btn btn-danger mb-3"
+                onMouseDown={() => dispatch(deleteProduct({ productId }))}
+              >
+                delete
+              </button>
+            </div>
           ) : (
             <AddCartComponent productId={productId} />
           )}
